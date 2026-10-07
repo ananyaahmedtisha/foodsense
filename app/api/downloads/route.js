@@ -1,15 +1,21 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer';
+import { adminSupabase } from '@/lib/supabaseAdmin';
+import { isSupabaseConfigured } from '@/lib/supabaseServer';
 
 export async function POST(req) {
   const { id } = await req.json();
-  if (!isSupabaseConfigured()) return NextResponse.json({ ok: true, demo: true });
+  // Service-role client: anonymous visitors may count downloads (no RLS update right),
+  // but raw gallery data stays protected — this route only increments a number.
+  const sb = adminSupabase();
+  if (!isSupabaseConfigured() || !sb) return NextResponse.json({ ok: true, demo: true });
   try {
-    const sb = createServerSupabase();
     const { data } = await sb.from('media_gallery').select('download_count').eq('id', id).single();
-    await sb.from('media_gallery').update({ download_count: (data?.download_count || 0) + 1 }).eq('id', id);
+    if (!data) return NextResponse.json({ error: 'not found' }, { status: 404 });
+    await sb.from('media_gallery').update({ download_count: (data.download_count || 0) + 1 }).eq('id', id);
     revalidatePath('/');
-  } catch {}
+  } catch (e) {
+    return NextResponse.json({ error: 'count failed' }, { status: 500 });
+  }
   return NextResponse.json({ ok: true });
 }

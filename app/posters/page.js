@@ -53,8 +53,7 @@ export default async function PostersPage({ searchParams }) {
             <div className="p-4">
               <p className="font-display font-bold text-sm">{m.title}</p>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-xs text-stone-500">⬇ {m.download_count || 0} downloads</span>
-                <DownloadButton id={m.id} fileUrl={m.file_url} title={m.title} />
+                <DownloadButton id={m.id} fileUrl={m.file_url} title={m.title} count={m.download_count || 0} />
               </div>
             </div>
           </div>
