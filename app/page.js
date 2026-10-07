@@ -4,7 +4,7 @@ import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer
 import { getHomepage } from '@/lib/content';
 import { demoPosts, demoGallery } from '@/lib/demoData';
 
-export const revalidate = 60; // refresh live counts at most once a minute
+export const dynamic = 'force-dynamic'; // live counter: always read fresh from Supabase
 
 function youtubeId(url) {
   if (!url) return null;

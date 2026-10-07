@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { createServerSupabase } from '@/lib/supabaseServer';
 
 const tabs = [
   { href: '/admin', label: 'Overview' },
@@ -12,7 +13,21 @@ const tabs = [
   { href: '/admin/contact', label: 'Contact' },
 ];
 
-export default function AdminLayout({ children }) {
+export default async function AdminLayout({ children }) {
+  let loggedIn = false;
+  try {
+    const sb = createServerSupabase();
+    if (sb) {
+      const { data: { user } } = await sb.auth.getUser();
+      loggedIn = !!user;
+    }
+  } catch {}
+
+  // Login page (logged out): bare shell, no dashboard tabs.
+  if (!loggedIn) {
+    return <div className="py-8">{children}</div>;
+  }
+
   return (
     <div className="py-8">
       <div className="flex items-center justify-between">
