@@ -1,6 +1,8 @@
 import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer';
 import { demoTeam } from '@/lib/demoData';
 
+export const revalidate = 300;
+
 export default async function AboutPage() {
   let team = demoTeam;
   if (isSupabaseConfigured()) {

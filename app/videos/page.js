@@ -3,6 +3,8 @@ import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer
 import { getCategories } from '@/lib/content';
 import { demoGallery } from '@/lib/demoData';
 
+export const revalidate = 300;
+
 function youtubeId(url) {
   if (!url) return null;
   const m = String(url).match(/(?:youtube\.com\/(?:watch\?[^#]*v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/);

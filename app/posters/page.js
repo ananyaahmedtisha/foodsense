@@ -4,6 +4,8 @@ import { getCategories } from '@/lib/content';
 import { demoGallery } from '@/lib/demoData';
 import DownloadButton from '@/components/DownloadButton';
 
+export const revalidate = 300;
+
 function isImage(url) {
   return !!url && /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(url);
 }

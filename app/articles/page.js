@@ -3,6 +3,8 @@ import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer
 import { getCategories } from '@/lib/content';
 import { demoPosts } from '@/lib/demoData';
 
+export const revalidate = 300;
+
 export default async function ArticlesPage({ searchParams }) {
   const cat = searchParams?.cat;
   const cats = await getCategories('article');

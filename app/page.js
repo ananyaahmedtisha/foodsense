@@ -4,6 +4,8 @@ import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer
 import { getHomepage } from '@/lib/content';
 import { demoPosts, demoGallery } from '@/lib/demoData';
 
+export const revalidate = 60; // refresh live counts at most once a minute
+
 function youtubeId(url) {
   if (!url) return null;
   const m = String(url).match(/(?:youtube\.com\/(?:watch\?[^#]*v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/);

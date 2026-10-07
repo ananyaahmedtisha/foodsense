@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer';
 import { demoSurveys } from '@/lib/demoData';
 
+export const revalidate = 120;
+
 export default async function SurveysPage() {
   let surveys = demoSurveys;
   if (isSupabaseConfigured()) {

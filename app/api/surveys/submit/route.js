@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer';
 
 export async function POST(req) {
@@ -11,5 +12,6 @@ export async function POST(req) {
   const sb = createServerSupabase();
   const { error } = await sb.from('survey_responses').insert({ survey_id, answers });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidatePath('/');
   return NextResponse.json({ ok: true });
 }
