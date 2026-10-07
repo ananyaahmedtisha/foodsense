@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { createServerSupabase } from '@/lib/supabaseServer';
+import AdminLogout from '@/components/AdminLogout';
+import AdminAutoLogout from '@/components/AdminAutoLogout';
 
 const tabs = [
   { href: '/admin', label: 'Overview' },
@@ -30,9 +32,13 @@ export default async function AdminLayout({ children }) {
 
   return (
     <div className="py-8">
+      <AdminAutoLogout />
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-extrabold">Admin Dashboard</h1>
-        <Link href="/" className="text-sm font-semibold text-fresh">← View site</Link>
+        <div className="flex items-center gap-2">
+          <Link href="/" className="text-sm font-semibold text-fresh">← View site</Link>
+          <AdminLogout />
+        </div>
       </div>
       <div className="flex flex-wrap gap-2 mt-4">
         {tabs.map((t) => (

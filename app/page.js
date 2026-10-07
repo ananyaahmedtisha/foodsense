@@ -24,7 +24,7 @@ async function getData() {
   try {
     const sb = createServerSupabase();
     const [respResult, postsResult, mediaResult, videosResult] = await Promise.all([
-      sb.from('survey_responses').select('*', { count: 'exact', head: true }),
+      sb.rpc('response_count'),
       sb.from('posts').select('*').eq('published', true).order('created_at', { ascending: false }).limit(3),
       sb.from('media_gallery').select('download_count'),
       sb.from('media_gallery').select('*').eq('media_type', 'video').order('created_at', { ascending: false }).limit(3),
@@ -33,7 +33,7 @@ async function getData() {
     if (mediaResult.data) {
       for (const m of mediaResult.data) dl += m.download_count || 0;
     }
-    const responses = respResult.count ?? 0;
+    const responses = respResult.data ?? 0;
     return {
       hero,
       posts: postsResult.data?.length ? postsResult.data : [],
