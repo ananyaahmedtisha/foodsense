@@ -7,6 +7,7 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [err, setErr] = useState('');
+  const [showPw, setShowPw] = useState(false);
   const [demo, setDemo] = useState(false);
   const router = useRouter();
 
@@ -36,10 +37,26 @@ export default function AdminLogin() {
     <div className="py-16 max-w-sm mx-auto">
       <div className="bg-white rounded-2xl shadow-soft p-8">
         <h1 className="font-display text-2xl font-extrabold">Admin login 🔐</h1>
-        <p className="text-sm text-stone-500 mt-1">Supabase Auth protected. Create the user in Supabase Dashboard → Authentication.</p>
         <form onSubmit={login} className="flex flex-col gap-3 mt-5">
           <input className="border rounded-xl px-3 py-2.5 text-sm" placeholder="admin@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input className="border rounded-xl px-3 py-2.5 text-sm" type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <div className="relative">
+            <input
+              className="border rounded-xl px-3 py-2.5 text-sm w-full pr-12"
+              type={showPw ? 'text' : 'password'}
+              placeholder="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw((s) => !s)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold text-fresh px-2 py-1"
+              aria-label={showPw ? 'Hide password' : 'Show password'}
+            >
+              {showPw ? 'Hide' : 'Show'}
+            </button>
+          </div>
           {err && <p className="text-sm text-red-600">{err}</p>}
           <button className="py-2.5 rounded-xl bg-stone-900 text-white font-bold">Sign in</button>
         </form>
