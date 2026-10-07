@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --fresh: #16A34A;
+  --amber: #F59E0B;
+  --teal: #0D9488;
+}
+
+body {
+  font-family: Inter, system-ui, sans-serif;
+  background: #FFFBEB;
+  color: #1c1917;
+}
+
+h1, h2, h3, .font-display {
+  font-family: "Plus Jakarta Sans", "Outfit", system-ui, sans-serif;
+}
+
+.masonry {
+  columns: 1;
+  column-gap: 1.25rem;
+}
+@media (min-width: 640px) { .masonry { columns: 2; } }
+@media (min-width: 1024px) { .masonry { columns: 3; } }
+.masonry > * {
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+}
+
+.card-flip { perspective: 1200px; }
+.card-flip-inner { transition: transform 0.5s; transform-style: preserve-3d; }
+.card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+.card-face { backface-visibility: hidden; }
+.card-back { transform: rotateY(180deg); }
