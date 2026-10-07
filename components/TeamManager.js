@@ -9,12 +9,29 @@ export default function TeamManager() {
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState(null);
   const [msg, setMsg] = useState('');
+  const [copy, setCopy] = useState({ intro: '', mission: '', team_title: '' });
+  const [copyMsg, setCopyMsg] = useState('');
 
   async function load() {
-    const j = await fetch('/api/admin/team').then((r) => r.json());
-    setItems(j.items || []);
+    const [t, s] = await Promise.all([
+      fetch('/api/admin/team').then((r) => r.json()),
+      fetch('/api/admin/settings?key=about').then((r) => r.json()).catch(() => ({})),
+    ]);
+    setItems(t.items || []);
+    if (s.value) setCopy({ intro: s.value.intro || '', mission: s.value.mission || '', team_title: s.value.team_title || '' });
   }
   useEffect(() => { load(); }, []);
+
+  async function saveCopy(e) {
+    e.preventDefault();
+    setCopyMsg('Saving…');
+    const res = await fetch('/api/admin/settings', {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'about', value: copy }),
+    });
+    const j = await res.json();
+    setCopyMsg(j.ok ? 'Page text updated.' : 'Error: ' + j.error);
+  }
 
   async function save(e) {
     e.preventDefault();
@@ -42,6 +59,23 @@ export default function TeamManager() {
   }
 
   return (
+    <div className="flex flex-col gap-6">
+      <form onSubmit={saveCopy} className="bg-white rounded-2xl shadow-soft p-6 flex flex-col gap-3">
+        <p className="font-display font-bold text-lg">About page text ✏️</p>
+        <label className="text-sm font-semibold">Intro (under the title)
+          <textarea className="block w-full border rounded-xl px-3 py-2.5 mt-1 font-normal" rows={2} value={copy.intro} onChange={(e) => setCopy({ ...copy, intro: e.target.value })} />
+        </label>
+        <label className="text-sm font-semibold">Our mission
+          <textarea className="block w-full border rounded-xl px-3 py-2.5 mt-1 font-normal" rows={3} value={copy.mission} onChange={(e) => setCopy({ ...copy, mission: e.target.value })} />
+        </label>
+        <label className="text-sm font-semibold">Team section heading
+          <input className="block w-full border rounded-xl px-3 py-2.5 mt-1 font-normal" value={copy.team_title} onChange={(e) => setCopy({ ...copy, team_title: e.target.value })} />
+        </label>
+        <div className="flex items-center gap-3">
+          <button className="px-5 py-2.5 rounded-xl bg-stone-900 text-white text-sm font-bold">Save page text</button>
+          {copyMsg && <span className="text-sm">{copyMsg}</span>}
+        </div>
+      </form>
     <div className="grid lg:grid-cols-2 gap-6 items-start">
       <form onSubmit={save} className="bg-white rounded-2xl shadow-soft p-6 flex flex-col gap-3">
         <p className="font-display font-bold text-lg">{editing ? 'Edit member' : 'Add member'} 👥</p>
@@ -73,6 +107,7 @@ export default function TeamManager() {
           {items.length === 0 && <p className="text-sm text-stone-500">No members yet.</p>}
         </div>
       </div>
+    </div>
     </div>
   );
 }
