@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabaseClient';
 
@@ -7,14 +7,24 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [err, setErr] = useState('');
+  const [demo, setDemo] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const sb = createClient();
+    if (!sb) {
+      const host = window.location.hostname;
+      setDemo(host === 'localhost' || host === '127.0.0.1');
+    }
+  }, []);
 
   async function login(e) {
     e.preventDefault();
     setErr('');
     const sb = createClient();
-    if (!sb) { // demo mode
-      router.push('/admin');
+    if (!sb) {
+      if (demo) { router.push('/admin'); return; } // local demo only
+      setErr('Admin is not connected (missing Supabase keys on the server).');
       return;
     }
     const { error } = await sb.auth.signInWithPassword({ email, password });
@@ -33,7 +43,7 @@ export default function AdminLogin() {
           {err && <p className="text-sm text-red-600">{err}</p>}
           <button className="py-2.5 rounded-xl bg-stone-900 text-white font-bold">Sign in</button>
         </form>
-        <p className="text-xs text-stone-400 mt-3">Demo mode (no Supabase keys): any input enters the dashboard.</p>
+        {demo && <p className="text-xs text-stone-400 mt-3">Local demo (no Supabase keys): any input enters the dashboard.</p>}
       </div>
     </div>
   );

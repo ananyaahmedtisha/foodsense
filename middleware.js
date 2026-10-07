@@ -7,7 +7,14 @@ export async function middleware(req) {
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || url.includes('xyzcompany')) return NextResponse.next(); // demo mode: allow
+  const host = req.nextUrl.hostname;
+  const isLocal = host === 'localhost' || host === '127.0.0.1';
+
+  // No Supabase keys: local demo may enter, production is always sent to login.
+  if (!url || !anon || url.includes('xyzcompany') || anon.includes('paste-')) {
+    if (isLocal) return NextResponse.next();
+    return NextResponse.redirect(new URL('/admin/login', req.url));
+  }
 
   let res = NextResponse.next();
   const sb = createServerClient(url, anon, {
