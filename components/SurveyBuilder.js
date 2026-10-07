@@ -40,6 +40,15 @@ export default function SurveyBuilder() {
     load();
   }
 
+  async function downloadCSV(s) {
+    const res = await fetch('/api/admin/export?survey_id=' + s.id);
+    const blob = await res.blob();
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 50) + '.csv';
+    link.click();
+  }
+
   async function viewQuestions(s) {
     if (openQs[s.id]) { setOpenQs((o) => ({ ...o, [s.id]: null })); return; }
     const j = await fetch('/api/admin/questions?survey_id=' + s.id).then((r) => r.json());
@@ -93,9 +102,10 @@ export default function SurveyBuilder() {
               <p className="font-semibold text-sm">{s.title}</p>
               <p className="text-xs text-stone-500">{s.is_active ? 'Active' : 'Paused'} • {s.responses ?? 0} responses</p>
               <p className="text-xs text-stone-400 break-all">/surveys/{s.id}</p>
-              <div className="flex gap-2 mt-2">
+              <div className="flex flex-wrap gap-2 mt-2">
                 <button onClick={() => toggle(s)} className="text-xs font-bold px-3 py-1.5 rounded-full border">{s.is_active ? 'Pause' : 'Activate'}</button>
                 <button onClick={() => viewQuestions(s)} className="text-xs font-bold px-3 py-1.5 rounded-full border">Questions</button>
+                <button onClick={() => downloadCSV(s)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-fresh text-white">⬇ CSV ({s.responses ?? 0})</button>
                 <button onClick={() => del(s.id)} className="text-xs font-bold px-3 py-1.5 rounded-full border text-red-600">Delete</button>
               </div>
               {openQs[s.id] && (

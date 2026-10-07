@@ -43,15 +43,6 @@ export default function AdminOverview() {
     load();
   }
 
-  async function downloadCSV() {
-    const res = await fetch('/api/admin/export');
-    const blob = await res.blob();
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'foodsense-responses.csv';
-    link.click();
-  }
-
   if (!a) return <p className="text-sm text-stone-500">Loading analytics…</p>;
   if (a.demo) return <p className="text-sm text-stone-500">Demo mode — connect Supabase for live analytics.</p>;
 
@@ -73,7 +64,6 @@ export default function AdminOverview() {
         <div className="bg-white rounded-2xl shadow-soft p-6">
           <p className="text-sm text-stone-500">Poster downloads</p>
           <p className="font-display text-4xl font-extrabold">{a.downloads}</p>
-          <button onClick={downloadCSV} className="mt-3 px-4 py-2 rounded-full bg-fresh text-white text-sm font-bold">⬇ Responses CSV</button>
         </div>
         <div className="bg-white rounded-2xl shadow-soft p-6">
           <p className="text-sm text-stone-500">Improvement goal</p>

@@ -35,10 +35,7 @@ export default async function AdminLayout({ children }) {
       <AdminAutoLogout />
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-extrabold">Admin Dashboard</h1>
-        <div className="flex items-center gap-2">
-          <Link href="/" className="text-sm font-semibold text-fresh">← View site</Link>
-          <AdminLogout />
-        </div>
+        <AdminLogout />
       </div>
       <div className="flex flex-wrap gap-2 mt-4">
         {tabs.map((t) => (

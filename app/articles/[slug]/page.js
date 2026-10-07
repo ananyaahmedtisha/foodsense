@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer';
 import { demoPosts } from '@/lib/demoData';
 
@@ -16,8 +15,7 @@ export default async function ArticleDetail({ params }) {
 
   return (
     <article className="py-8 max-w-3xl mx-auto">
-      <Link href="/articles" className="text-sm text-fresh font-semibold">← Back to Pantry</Link>
-      <span className="ml-3 text-[11px] font-bold px-2.5 py-1 rounded-full bg-cream border">{post.category}</span>
+      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-cream border">{post.category}</span>
       <h1 className="font-display text-3xl md:text-4xl font-extrabold mt-3 leading-tight">{post.title}</h1>
       <p className="text-sm text-stone-500 mt-2">⏱ {post.reading_minutes || 5} min read • {new Date(post.created_at).toLocaleDateString()}</p>
       {post.cover_image_url ? (

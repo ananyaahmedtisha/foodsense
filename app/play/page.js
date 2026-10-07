@@ -32,7 +32,6 @@ export default function PlayPage({ searchParams }) {
 
   return (
     <div className="py-8 max-w-2xl mx-auto">
-      <Link href="/play" className="text-sm text-fresh font-semibold">← All games</Link>
       <h1 className="font-display text-2xl font-extrabold mt-2">{current.emoji} {current.title}</h1>
       <div className="mt-4">
         {current.key === 'redflag' ? <RedFlagGreenFlag /> : <BudgetBiteBuilder />}
