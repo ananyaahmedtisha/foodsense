@@ -50,7 +50,7 @@ async function getData() {
 
 export default async function Home() {
   const data = await getData();
-  const goal = Number(process.env.NEXT_PUBLIC_IMPACT_GOAL || 400);
+  const goal = Number(data.hero.goal || process.env.NEXT_PUBLIC_IMPACT_GOAL || 400);
   const pct = Math.min(100, Math.round((data.participantCount / goal) * 100));
 
   return (
@@ -95,7 +95,7 @@ export default async function Home() {
               <p className="text-white/60 text-xs">poster downloads — counted on every click</p>
             </div>
           </div>
-          <p className="text-xs text-white/60 mt-3">Lives = survey responses + poster downloads. Goal: 301–400 lives, Aug–Nov 2026.</p>
+          <p className="text-xs text-white/60 mt-3">Lives = survey responses + poster downloads. Goal: {goal} lives, Aug–Nov 2026.</p>
         </div>
       </section>
 

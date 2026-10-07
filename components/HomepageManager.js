@@ -5,6 +5,7 @@ const empty = {
   title_a: 'Food science,',
   title_b: 'minus the jargon.',
   description: 'FoodSense turns microbiology into 2-minute habits for hostel life: storage, labels, and cheap nutritious meals.',
+  goal: 400,
 };
 
 export default function HomepageManager() {
@@ -39,6 +40,9 @@ export default function HomepageManager() {
       </label>
       <label className="text-sm font-semibold">Description
         <textarea className="block w-full border rounded-xl px-3 py-2.5 mt-1 font-normal" rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+      </label>
+      <label className="text-sm font-semibold">Lives goal (number shown in Impact Tracker)
+        <input type="number" min="1" className="block w-full border rounded-xl px-3 py-2.5 mt-1 font-normal" value={form.goal} onChange={(e) => setForm({ ...form, goal: Number(e.target.value) })} />
       </label>
       <div className="rounded-xl bg-cream border p-4">
         <p className="text-xs text-stone-500 font-bold uppercase">Preview</p>
