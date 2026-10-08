@@ -107,7 +107,7 @@ export default async function Home() {
               <p className="text-white/60 text-xs">video views</p>
             </div>
           </div>
-          <p className="text-xs text-white/60 mt-3">Engagements = survey responses + poster downloads + video views. Goal: {goal}, Aug–Nov 2026.</p>
+          <p className="text-xs text-white/60 mt-3">Engagements = survey responses + poster downloads + video views. Goal: {goal}, {data.hero.period}.</p>
         </div>
       </section>
 

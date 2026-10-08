@@ -6,6 +6,7 @@ const empty = {
   title_b: 'minus the jargon.',
   description: 'FoodSense turns microbiology into 2-minute habits for hostel life: storage, labels, and cheap nutritious meals.',
   goal: 400,
+  period: 'Aug–Nov 2026',
 };
 
 export default function HomepageManager() {
@@ -43,6 +44,9 @@ export default function HomepageManager() {
       </label>
       <label className="text-sm font-semibold">Engagement goal (number shown in Impact Tracker)
         <input type="number" min="1" className="block w-full border rounded-xl px-3 py-2.5 mt-1 font-normal" value={form.goal} onChange={(e) => setForm({ ...form, goal: Number(e.target.value) })} />
+      </label>
+      <label className="text-sm font-semibold">Goal period (shown under the tracker)
+        <input className="block w-full border rounded-xl px-3 py-2.5 mt-1 font-normal" placeholder="Aug–Nov 2026" value={form.period} onChange={(e) => setForm({ ...form, period: e.target.value })} />
       </label>
       <div className="rounded-xl bg-cream border p-4">
         <p className="text-xs text-stone-500 font-bold uppercase">Preview</p>
