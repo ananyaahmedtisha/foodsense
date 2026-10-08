@@ -99,10 +99,13 @@ h1, h2, h3, .font-display {
 /* Gradient stops: Tailwind bakes `via` colors literally into --tw-gradient-stops,
    so a dark theme must rebuild the full stops value, not just the color var. */
 .dark .from-fresh-light { --tw-gradient-from: #14532d var(--tw-gradient-from-position); }
+.dark .from-labteal-light { --tw-gradient-from: #134e4a var(--tw-gradient-from-position); }
+.dark .from-amberwarm-light { --tw-gradient-from: #451a03 var(--tw-gradient-from-position); }
 .dark .via-cream {
   --tw-gradient-to: rgb(28 25 23 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), #1c1917 var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
+.dark .to-fresh-light { --tw-gradient-to: #14532d var(--tw-gradient-to-position); }
 .dark .to-labteal-light { --tw-gradient-to: #134e4a var(--tw-gradient-to-position); }
 .dark .to-amberwarm-light { --tw-gradient-to: #451a03 var(--tw-gradient-to-position); }
 .dark .bg-fresh-light { background-color: #14532d; }
