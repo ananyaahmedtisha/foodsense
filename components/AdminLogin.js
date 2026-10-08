@@ -9,6 +9,7 @@ export default function AdminLogin() {
   const [err, setErr] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [demo, setDemo] = useState(false);
+  const [forgot, setForgot] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -31,6 +32,19 @@ export default function AdminLogin() {
     const { error } = await sb.auth.signInWithPassword({ email, password });
     if (error) setErr(error.message);
     else router.push('/admin');
+  }
+
+  async function sendReset() {
+    setForgot('');
+    setErr('');
+    if (!email.trim()) { setForgot('Type your admin email above first.'); return; }
+    const sb = createClient();
+    if (!sb) return;
+    setForgot('Sending…');
+    const { error } = await sb.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin + '/auth/confirm',
+    });
+    setForgot(error ? 'Error: ' + error.message : 'Recovery email sent — open it on this device.');
   }
 
   return (
@@ -59,6 +73,8 @@ export default function AdminLogin() {
           </div>
           {err && <p className="text-sm text-red-600">{err}</p>}
           <button className="py-2.5 rounded-xl bg-stone-900 text-white font-bold">Sign in</button>
+          <button type="button" onClick={sendReset} className="text-xs font-semibold text-fresh hover:underline">Forgot password?</button>
+          {forgot && <p className="text-xs">{forgot}</p>}
         </form>
         {demo && <p className="text-xs text-stone-400 mt-3">Local demo (no Supabase keys): any input enters the dashboard.</p>}
       </div>

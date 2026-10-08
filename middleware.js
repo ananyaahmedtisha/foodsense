@@ -3,7 +3,9 @@ import { NextResponse } from 'next/server';
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
-  if (!pathname.startsWith('/admin') || pathname.startsWith('/admin/login')) return NextResponse.next();
+  if (!pathname.startsWith('/admin') || pathname.startsWith('/admin/login') || pathname.startsWith('/admin/reset-password')) {
+    return NextResponse.next();
+  }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
