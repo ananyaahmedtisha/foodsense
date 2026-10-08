@@ -2,7 +2,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Shuffle, MapPin, Wallet, Sparkles, ListOrdered, Dices } from 'lucide-react';
 import { noodleUpgrades } from '@/lib/demoData';
-import { sfx } from '@/lib/sounds';
 
 const GOALS = [
   { id: 'gut', name: 'Happy Gut', emoji: '🥬', desc: 'fibre + freshness', gain: 'Smoother digestion and steady energy for classes.' },
@@ -128,7 +127,6 @@ export default function BudgetBiteBuilder() {
       setGoal(randomCard.goal);
     }
     setSeed(Math.floor(Math.random() * 1000));
-    sfx.pop();
   }
 
   const info = STAPLE_INFO[stapleId] || { price: '~৳30', base: 30, blurb: '' };
@@ -202,7 +200,7 @@ export default function BudgetBiteBuilder() {
           </div>
 
           <p className="text-xs text-stone-500 mt-3 flex items-center gap-1"><MapPin size={12} /> Everything available in Badda kitchen markets & hostel shops.</p>
-          <button onClick={() => { setSeed((s) => s + 1); sfx.pop(); }} className="mt-3 text-sm font-bold text-fresh flex items-center gap-1">
+          <button onClick={() => setSeed((s) => s + 1)} className="mt-3 text-sm font-bold text-fresh flex items-center gap-1">
             <Shuffle size={14} /> Show another idea
           </button>
           <button onClick={surprise} className="mt-2 text-sm font-bold text-stone-500 flex items-center gap-1">

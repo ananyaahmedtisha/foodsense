@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Search, Plus, Minus, Trash2, RotateCcw, Info, Scale, UtensilsCrossed, Volume2, VolumeX } from 'lucide-react';
+import { Search, Plus, Minus, Trash2, RotateCcw, Info, Scale, UtensilsCrossed } from 'lucide-react';
 import { calorieFoods } from '@/lib/calorieFoods';
-import { sfx, isMuted, setMuted } from '@/lib/sounds';
 
 const KEY = 'foodsense-plate-v1';
 
@@ -52,10 +51,8 @@ export default function CalorieCounter() {
   const [qty, setQty] = useState(1);
   const [plate, setPlate] = useState([]);
   const [goal, setGoal] = useState(2000);
-  const [muted, setM] = useState(false);
 
   useEffect(() => {
-    setM(isMuted());
     fetch('/api/calorie-foods')
       .then((r) => r.json())
       .then((j) => { if (j.items?.length) setFoods(j.items); })
@@ -88,7 +85,6 @@ export default function CalorieCounter() {
     setSelectedId(id);
     setUnit('serv');
     setQty(1);
-    sfx.tap();
   }
 
   function addToPlate() {
@@ -103,7 +99,6 @@ export default function CalorieCounter() {
       }
       return [...pl, { id: food.id, portion: p }];
     });
-    sfx.pop();
   }
 
   const lines = plate.map((p) => ({ ...p, food: foods.find((f) => f.id === p.id) })).filter((l) => l.food);
@@ -165,16 +160,7 @@ export default function CalorieCounter() {
       {/* Steps 2–3 — quantity → kcal → plate */}
       <div className="flex flex-col gap-4 lg:sticky lg:top-20">
         <div className="rounded-3xl p-6 text-white bg-gradient-to-br from-stone-900 via-emerald-950 to-teal-900 shadow-lift">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">Step 2 — quantity → kcal</p>
-            <button
-              onClick={() => { const m = !muted; setM(m); setMuted(m); }}
-              className="text-white/60 hover:text-white"
-              aria-label={muted ? 'Unmute sounds' : 'Mute sounds'}
-            >
-              {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-            </button>
-          </div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">Step 2 — quantity → kcal</p>
           {!food ? (
             <p className="text-white/70 text-sm mt-4">Select a food on the left to calculate its calories.</p>
           ) : (
