@@ -16,6 +16,7 @@ export default async function Footer() {
             <a href="/posters">Awareness Gallery</a>
             <a href="/videos">Visual Learning</a>
             <a href="/surveys">Campus Pulse</a>
+            <a href="/calories">Calorie Counter</a>
           </div>
         </div>
         <div>

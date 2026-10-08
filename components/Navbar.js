@@ -11,6 +11,7 @@ const links = [
   { href: '/videos', label: 'Visual Learning' },
   { href: '/surveys', label: 'Campus Pulse' },
   { href: '/play', label: 'Play & Learn' },
+  { href: '/calories', label: 'Calorie Counter' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ];

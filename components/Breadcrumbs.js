@@ -9,6 +9,7 @@ const LABELS = {
   videos: 'Visual Learning',
   surveys: 'Campus Pulse',
   play: 'Play & Learn',
+  calories: 'Calorie Counter',
   about: 'About',
   contact: 'Contact',
   admin: 'Admin',
