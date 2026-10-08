@@ -66,8 +66,7 @@ export default async function AboutPage() {
 
       {/* Team */}
       <section className="mt-12">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-fresh">Credits</p>
-        <h2 className="font-display text-2xl font-extrabold mt-1">{copy.team_title}</h2>
+        <h2 className="font-display font-extrabold text-fresh text-2xl md:text-3xl tracking-wide">{copy.team_title}</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
           {team.map((m) => (
             <article key={m.id} className="bg-white rounded-3xl shadow-soft overflow-hidden flex flex-col">
