@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu } from 'lucide-react';
 import Logo from './Logo';
+import ThemeToggle from './ThemeToggle';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -23,7 +24,9 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b">
       <nav className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between">
         <span onClick={() => setOpen(false)}><Logo /></span>
-        <div className="relative">
+        <div className="flex items-center gap-1.5">
+          <ThemeToggle />
+          <div className="relative">
           <button
             className="p-2.5 rounded-lg hover:bg-cream"
             aria-label="All pages"
@@ -49,6 +52,7 @@ export default function Navbar() {
               </div>
             </>
           )}
+          </div>
         </div>
       </nav>
     </header>

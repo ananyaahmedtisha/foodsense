@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Share2, RotateCcw } from 'lucide-react';
+import { Share2, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { flagCards } from '@/lib/demoData';
+import { sfx, isMuted, setMuted } from '@/lib/sounds';
 
 function rotateDaily(cards) {
   if (!cards || cards.length < 2) return cards;
@@ -29,6 +30,9 @@ export default function RedFlagGreenFlag() {
   const [score, setScore] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
+  const [muted, setM] = useState(false);
+
+  useEffect(() => { setM(isMuted()); }, []);
 
   function deal(full) {
     const n = MIN_SESSION + Math.floor(Math.random() * (MAX_SESSION - MIN_SESSION + 1));
@@ -53,12 +57,16 @@ export default function RedFlagGreenFlag() {
 
   function guess(color) {
     if (revealed) return;
-    if (color === card.verdict) setScore((s) => s + 1);
+    sfx.tap();
+    const correct = color === card.verdict;
+    if (correct) setScore((s) => s + 1);
     setRevealed(true);
+    // Synced with the 0.5s card flip: verdict sound lands as the answer shows.
+    setTimeout(() => { correct ? sfx.good() : sfx.bad(); }, 420);
   }
 
   function next() {
-    if (idx + 1 >= cards.length) setDone(true);
+    if (idx + 1 >= cards.length) { setDone(true); setTimeout(() => sfx.win(), 350); }
     else { setIdx(idx + 1); setRevealed(false); }
   }
 
@@ -86,7 +94,14 @@ export default function RedFlagGreenFlag() {
 
   return (
     <div className="bg-white rounded-2xl shadow-soft p-6 max-w-md mx-auto">
-      <div className="flex justify-between text-sm text-stone-500 mb-3"><span>Card {idx + 1}/{cards.length} • fresh set every game</span><span>Score: {score}</span></div>
+      <div className="flex justify-between items-center text-sm text-stone-500 mb-3">
+        <span>Card {idx + 1}/{cards.length} • fresh set every game</span>
+        <span className="flex items-center gap-2">Score: {score}
+          <button onClick={() => { const m = !muted; setM(m); setMuted(m); }} className="text-stone-400 hover:text-fresh" aria-label={muted ? 'Unmute sounds' : 'Mute sounds'}>
+            {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+          </button>
+        </span>
+      </div>
       <div className={`card-flip ${revealed ? 'flipped' : ''}`}>
         <div className="card-flip-inner relative min-h-[220px]">
           <div className="card-face absolute inset-0 bg-cream border rounded-2xl p-6 grid place-items-center text-center">

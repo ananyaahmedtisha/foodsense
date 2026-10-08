@@ -63,23 +63,26 @@ export default async function Home() {
 
   return (
     <div className="py-8">
-      <section className="grid md:grid-cols-2 gap-8 items-center bg-white rounded-3xl shadow-soft p-8">
-        <div>
-          <h1 className="font-display text-4xl md:text-5xl font-extrabold mt-4 leading-tight">
-            {data.hero.title_a} <span className="text-fresh">{data.hero.title_b}</span>
+      <section className="hero-glow grid md:grid-cols-2 gap-8 items-center bg-white rounded-3xl shadow-soft p-8 md:p-10 border border-fresh/10">
+        <div className="rise">
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-fresh-light text-fresh-dark">
+            ● 100% free • No login needed
+          </span>
+          <h1 className="font-display text-4xl md:text-[3.4rem] font-extrabold mt-4 leading-[1.05]">
+            {data.hero.title_a} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fresh to-labteal">{data.hero.title_b}</span>
           </h1>
-          <p className="text-stone-600 mt-4">{data.hero.description}</p>
+          <p className="text-stone-600 mt-4 text-lg leading-relaxed">{data.hero.description}</p>
           <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/articles" className="px-5 py-3 rounded-full bg-fresh text-white font-semibold flex items-center gap-2">
+            <Link href="/articles" className="px-6 py-3 rounded-full bg-fresh text-white font-semibold flex items-center gap-2 shadow-lift hover:bg-fresh-dark hover:-translate-y-0.5 transition">
               Start reading <ArrowRight size={16} />
             </Link>
-            <Link href="/play" className="px-5 py-3 rounded-full bg-stone-900 text-white font-semibold">
+            <Link href="/play" className="px-6 py-3 rounded-full bg-stone-900 text-white font-semibold hover:-translate-y-0.5 transition shadow-soft">
               Play & Learn 🎮
             </Link>
           </div>
         </div>
 
-        <div className="bg-stone-900 text-white rounded-2xl p-6">
+        <div className="rise-1 bg-stone-900 text-white rounded-2xl p-6 shadow-lift">
           <div className="flex items-center justify-between">
             <p className="font-display font-bold flex items-center gap-2">
               <Users size={18} /> Impact Tracker
@@ -111,7 +114,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mt-10">
+      <section className="mt-10 rise-2">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-2xl font-extrabold">Latest from the Pantry</h2>
           <Link href="/articles" className="text-sm font-semibold text-fresh">View all →</Link>
