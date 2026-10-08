@@ -3,6 +3,7 @@ import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer
 import { getCategories } from '@/lib/content';
 import { demoGallery } from '@/lib/demoData';
 import VideoCard from '@/components/VideoCard';
+import PageHero from '@/components/PageHero';
 
 export const revalidate = 300;
 
@@ -24,8 +25,12 @@ export default async function VideosPage({ searchParams }) {
 
   return (
     <div className="py-8">
-      <h1 className="font-display text-3xl font-extrabold">Visual Learning 🎬</h1>
-      <p className="text-stone-500 mt-1">Short videos explaining microbes & food safety — tap to play, views counted automatically.</p>
+      <PageHero
+        eyebrow="Visual Learning"
+        title="Watch microbes in action 🎬"
+        sub="Short videos explaining microbes and food safety — tap to play, views counted automatically."
+        tone="green"
+      />
       {cats.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-4">
           <Link href="/videos" className={`px-4 py-1.5 rounded-full text-sm font-semibold border ${!cat ? 'bg-stone-900 text-white' : 'bg-white'}`}>All</Link>

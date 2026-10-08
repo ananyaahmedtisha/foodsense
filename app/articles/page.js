@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer';
 import { getCategories } from '@/lib/content';
 import { demoPosts } from '@/lib/demoData';
+import PageHero from '@/components/PageHero';
 
 export const revalidate = 300;
 
@@ -24,9 +25,13 @@ export default async function ArticlesPage({ searchParams }) {
 
   return (
     <div className="py-8">
-      <h1 className="font-display text-3xl font-extrabold">The Science Pantry 📚</h1>
-      <p className="text-stone-500 mt-1">Short, practical reads — no heavy jargon.</p>
-      <div className="flex flex-wrap gap-2 mt-4">
+      <PageHero
+        eyebrow="Science Pantry"
+        title="Short reads, zero jargon 📚"
+        sub="Hostel storage, label tricks, and microbe safety — 5 minutes each."
+        tone="amber"
+      />
+      <div className="flex flex-wrap gap-2 mt-6">
         <Link href="/articles" className={`px-4 py-1.5 rounded-full text-sm font-semibold border ${!cat ? 'bg-stone-900 text-white' : 'bg-white'}`}>All</Link>
         {cats.map((c) => (
           <Link key={c} href={`/articles?cat=${encodeURIComponent(c)}`} className={`px-4 py-1.5 rounded-full text-sm font-semibold border ${cat === c ? 'bg-stone-900 text-white' : 'bg-white'}`}>{c}</Link>

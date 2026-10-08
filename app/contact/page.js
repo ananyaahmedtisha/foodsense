@@ -1,13 +1,18 @@
 import { getContactInfo } from '@/lib/content';
 import ContactForm from '@/components/ContactForm';
+import PageHero from '@/components/PageHero';
 
 export default async function ContactPage() {
   const info = await getContactInfo();
 
   return (
     <div className="py-8 max-w-3xl mx-auto">
-      <h1 className="font-display text-3xl font-extrabold">Contact Us ✉️</h1>
-      <p className="text-stone-500 mt-1">{info.about}</p>
+      <PageHero
+        eyebrow="Contact Us"
+        title="Talk to us ✉️"
+        sub={info.about}
+        tone="teal"
+      />
       <div className="grid md:grid-cols-2 gap-4 mt-6">
         <div className="bg-white rounded-2xl shadow-soft p-6">
           <p className="font-bold">Reach us</p>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import RedFlagGreenFlag from '@/components/RedFlagGreenFlag';
 import BudgetBiteBuilder from '@/components/BudgetBiteBuilder';
+import PageHero from '@/components/PageHero';
 
 const games = [
   { key: 'redflag', emoji: '🚩', title: 'Red Flag or Green Flag', desc: 'Swipe kitchen habits. New order daily. Get your Food Safety IQ.' },
@@ -14,8 +15,12 @@ export default function PlayPage({ searchParams }) {
   if (!current) {
     return (
       <div className="py-8">
-        <h1 className="font-display text-3xl font-extrabold">Play & Learn 🎮</h1>
-        <p className="text-stone-500 mt-1">Choose a game to start. No login needed.</p>
+        <PageHero
+          eyebrow="Play & Learn"
+          title="Learn by playing 🎮"
+          sub="Two games, zero login. Build kitchen instincts and stretch your food budget."
+          tone="amber"
+        />
         <div className="grid md:grid-cols-2 gap-4 mt-6">
           {games.map((g) => (
             <Link key={g.key} href={`/play?game=${g.key}`} className="bg-white rounded-2xl shadow-soft p-8 text-center hover:shadow-lift hover:-translate-y-0.5 transition">

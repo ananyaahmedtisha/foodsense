@@ -114,6 +114,22 @@ export default async function Home() {
         </div>
       </section>
 
+      <section className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-6 rise-1">
+        {[
+          { href: '/articles', emoji: '📚', label: 'Science Pantry', bg: 'from-amber-100 to-amber-50' },
+          { href: '/posters', emoji: '🖼️', label: 'Awareness Gallery', bg: 'from-teal-50 to-emerald-50' },
+          { href: '/videos', emoji: '🎬', label: 'Visual Learning', bg: 'from-sky-100 to-teal-50' },
+          { href: '/surveys', emoji: '📋', label: 'Campus Pulse', bg: 'from-emerald-50 to-green-50' },
+          { href: '/calories', emoji: '🍛', label: 'Calorie Counter', bg: 'from-orange-100 to-amber-50' },
+          { href: '/play', emoji: '🎮', label: 'Play & Learn', bg: 'from-green-50 to-teal-50' },
+        ].map((t) => (
+          <Link key={t.href} href={t.href} className={`bg-gradient-to-br ${t.bg} border border-white/70 rounded-2xl p-4 shadow-soft hover:shadow-lift hover:-translate-y-0.5 transition flex items-center gap-3`}>
+            <span className="text-3xl">{t.emoji}</span>
+            <span className="font-display font-bold text-[15px] leading-tight">{t.label}</span>
+          </Link>
+        ))}
+      </section>
+
       <section className="mt-10 rise-2">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-2xl font-extrabold">Latest from the Pantry</h2>

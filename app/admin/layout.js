@@ -10,6 +10,7 @@ const tabs = [
   { href: '/admin/media', label: 'Posters & Videos' },
   { href: '/admin/team', label: 'About' },
   { href: '/admin/surveys', label: 'Surveys' },
+  { href: '/admin/foods', label: 'Foods' },
   { href: '/admin/categories', label: 'Segments' },
   { href: '/admin/games', label: 'Games' },
   { href: '/admin/contact', label: 'Contact' },

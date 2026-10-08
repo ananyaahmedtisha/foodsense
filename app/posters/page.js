@@ -3,6 +3,7 @@ import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer
 import { getCategories } from '@/lib/content';
 import { demoGallery } from '@/lib/demoData';
 import DownloadButton from '@/components/DownloadButton';
+import PageHero from '@/components/PageHero';
 
 export const revalidate = 300;
 
@@ -30,8 +31,12 @@ export default async function PostersPage({ searchParams }) {
 
   return (
     <div className="py-8">
-      <h1 className="font-display text-3xl font-extrabold">Awareness Gallery 🖼️</h1>
-      <p className="text-stone-500 mt-1">Awareness posters for dorms & campus clubs — preview and download. {!live && '(demo data — connect Supabase for live)'}</p>
+      <PageHero
+        eyebrow="Awareness Gallery"
+        title="Posters that teach 🖼️"
+        sub="Downloadable awareness posters for dorms and campus clubs."
+        tone="teal"
+      />
       {cats.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-4">
           <Link href="/posters" className={`px-4 py-1.5 rounded-full text-sm font-semibold border ${!cat ? 'bg-stone-900 text-white' : 'bg-white'}`}>All</Link>

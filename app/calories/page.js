@@ -1,4 +1,6 @@
 import CalorieCounter from '@/components/CalorieCounter';
+import FoodRequestForm from '@/components/FoodRequestForm';
+import PageHero from '@/components/PageHero';
 
 export const metadata = {
   title: 'Bangladeshi Calorie Counter — FoodSense',
@@ -8,11 +10,16 @@ export const metadata = {
 export default function CaloriesPage() {
   return (
     <div className="py-8">
-      <h1 className="font-display text-3xl font-extrabold">Bangladeshi Calorie Counter 🍛</h1>
-      <p className="text-stone-500 mt-1">77 local foods with Bangla search. Pick portions, build your plate, see totals against your daily goal.</p>
+      <PageHero
+        eyebrow="Bangladeshi Calorie Counter"
+        title="Know what's on your plate 🍛"
+        sub="75 local foods with Bangla search. Pick portions, build your plate, see totals against your daily goal."
+        tone="amber"
+      />
       <div className="mt-6">
         <CalorieCounter />
       </div>
+      <FoodRequestForm />
     </div>
   );
 }

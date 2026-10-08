@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Search, Plus, Minus, Trash2, RotateCcw, Info, Scale, UtensilsCrossed, Volume2, VolumeX } from 'lucide-react';
-import { calorieFoods, calorieCategories } from '@/lib/calorieFoods';
+import { calorieFoods } from '@/lib/calorieFoods';
 import { sfx, isMuted, setMuted } from '@/lib/sounds';
 
 const KEY = 'foodsense-plate-v1';
@@ -44,6 +44,7 @@ function MacroBar({ label, grams, kcalShare, color }) {
 }
 
 export default function CalorieCounter() {
+  const [foods, setFoods] = useState(calorieFoods);
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('All');
   const [selectedId, setSelectedId] = useState(null);
@@ -55,6 +56,10 @@ export default function CalorieCounter() {
 
   useEffect(() => {
     setM(isMuted());
+    fetch('/api/calorie-foods')
+      .then((r) => r.json())
+      .then((j) => { if (j.items?.length) setFoods(j.items); })
+      .catch(() => {});
     try {
       const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
       if (Array.isArray(saved)) setPlate(saved.filter((p) => calorieFoods.some((f) => f.id === p.id)));
@@ -66,14 +71,15 @@ export default function CalorieCounter() {
 
   const results = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return calorieFoods.filter((f) => {
+    return foods.filter((f) => {
       if (cat !== 'All' && f.category !== cat) return false;
       if (!needle) return true;
-      return f.name.toLowerCase().includes(needle) || f.terms.includes(needle);
+      return f.name.toLowerCase().includes(needle) || (f.terms || '').includes(needle);
     });
-  }, [q, cat]);
+  }, [q, cat, foods]);
 
-  const food = calorieFoods.find((f) => f.id === selectedId) || null;
+  const categories = useMemo(() => [...new Set(foods.map((f) => f.category))], [foods]);
+  const food = foods.find((f) => f.id === selectedId) || null;
   const portion = unit === 'serv' ? qty : food ? qty / (food.grams || 100) : 0;
   const cur = food ? scale(food, portion) : null;
   const kcalShown = Math.round(useCountUp(cur?.kcal || 0));
@@ -100,7 +106,7 @@ export default function CalorieCounter() {
     sfx.pop();
   }
 
-  const lines = plate.map((p) => ({ ...p, food: calorieFoods.find((f) => f.id === p.id) })).filter((l) => l.food);
+  const lines = plate.map((p) => ({ ...p, food: foods.find((f) => f.id === p.id) })).filter((l) => l.food);
   const totals = lines.reduce(
     (s, l) => {
       const v = scale(l.food, l.portion);
@@ -127,7 +133,7 @@ export default function CalorieCounter() {
           />
         </div>
         <div className="flex flex-wrap gap-2 mt-3">
-          {['All', ...calorieCategories].map((c) => (
+          {['All', ...categories].map((c) => (
             <button
               key={c}
               onClick={() => setCat(c)}
@@ -148,7 +154,8 @@ export default function CalorieCounter() {
                 <p className="font-display font-bold text-[15px] leading-snug">{f.name}</p>
                 <span className="font-display font-extrabold text-fresh whitespace-nowrap">{f.kcal}<span className="text-[11px] font-medium text-stone-400"> kcal</span></span>
               </div>
-              <p className="text-xs text-stone-500 mt-0.5">{f.serving}{f.bn.length > 0 && ` • ${f.bn[0]}`}</p>
+              <p className="text-xs text-stone-500 mt-0.5">{f.serving} • {f.grams} gm{f.bn.length > 0 && ` • ${f.bn[0]}`}</p>
+              <p className="text-[11px] text-stone-400">per 100 gm ≈ {Math.round((f.kcal / (f.grams || 100)) * 100)} kcal</p>
             </button>
           ))}
         </div>
@@ -173,7 +180,7 @@ export default function CalorieCounter() {
           ) : (
             <>
               <p className="font-display font-bold text-xl mt-2">{food.name}</p>
-              <p className="text-xs text-white/60">1 serving = {food.serving} ({food.grams}g)</p>
+              <p className="text-xs text-white/60">1 serving = {food.serving} ({food.grams} gm) • per 100 gm ≈ {Math.round((food.kcal / (food.grams || 100)) * 100)} kcal</p>
               <div className="grid grid-cols-2 gap-2 mt-4">
                 <button onClick={() => { setUnit('serv'); setQty(1); }} className={`py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 ${unit === 'serv' ? 'bg-fresh text-white' : 'bg-white/10 text-white/70'}`}>
                   <UtensilsCrossed size={14} /> Servings
@@ -193,7 +200,7 @@ export default function CalorieCounter() {
                     />
                     <button onClick={() => setQty((v) => Math.min(10, Math.round((v + 0.5) * 2) / 2))} className="w-9 h-9 rounded-full bg-white/10 grid place-items-center hover:bg-white/20" aria-label="More"><Plus size={15} /></button>
                   </div>
-                  <p className="text-center font-bold mt-1">×{qty} serving{qty !== 1 ? 's' : ''}</p>
+                  <p className="text-center font-bold mt-1">×{qty} serving{qty !== 1 ? 's' : ''} ≈ {Math.round(qty * (food.grams || 0))} gm</p>
                 </>
               ) : (
                 <div className="flex items-center gap-2 mt-4">
