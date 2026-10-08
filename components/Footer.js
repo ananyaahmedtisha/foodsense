@@ -7,7 +7,7 @@ export default async function Footer() {
       <div className="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-3 gap-6 text-sm">
         <div>
           <p className="font-display font-bold text-lg">FoodSense</p>
-          <p className="text-stone-600 mt-2">Translating microbiology into everyday food advice for students in Dhaka and beyond.</p>
+          <p className="text-stone-600 mt-2">Translating microbiology into everyday food advice.</p>
         </div>
         <div>
           <p className="font-semibold mb-2">Explore</p>
@@ -28,7 +28,7 @@ export default async function Footer() {
           </div>
         </div>
       </div>
-      <div className="text-center text-xs text-stone-500 pb-6">© 2026 FoodSense • Built for students, by students.</div>
+      <div className="text-center text-xs text-stone-500 pb-6">© FoodSense</div>
     </footer>
   );
 }

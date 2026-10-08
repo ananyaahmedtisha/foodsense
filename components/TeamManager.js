@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import UploadField from './UploadField';
 
-const empty = { name: '', role: 'Contributor', bio: '', image_url: '', display_order: 0 };
+const empty = { name: '', role: 'Contributor', bio: '', image_url: '', display_order: 0, linkedin: '', github: '', facebook: '', instagram: '' };
 
 export default function TeamManager() {
   const [items, setItems] = useState([]);
@@ -48,7 +48,7 @@ export default function TeamManager() {
 
   function edit(it) {
     setEditing(it.id);
-    setForm({ name: it.name, role: it.role, bio: it.bio || '', image_url: it.image_url || '', display_order: it.display_order || 0 });
+    setForm({ name: it.name, role: it.role, bio: it.bio || '', image_url: it.image_url || '', display_order: it.display_order || 0, linkedin: it.linkedin || '', github: it.github || '', facebook: it.facebook || '', instagram: it.instagram || '' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -84,6 +84,13 @@ export default function TeamManager() {
         <input className="border rounded-xl px-3 py-2.5" placeholder="Role e.g. Founder, Web Developer" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} required />
         <textarea className="border rounded-xl px-3 py-2.5" rows={3} placeholder="Short bio" value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
         <input className="border rounded-xl px-3 py-2.5" type="number" placeholder="Display order" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: Number(e.target.value) })} />
+        <p className="text-sm font-semibold mt-1">Profile links (optional)</p>
+        <div className="grid grid-cols-2 gap-2">
+          <input className="border rounded-xl px-3 py-2 text-sm" placeholder="LinkedIn URL" value={form.linkedin} onChange={(e) => setForm({ ...form, linkedin: e.target.value })} />
+          <input className="border rounded-xl px-3 py-2 text-sm" placeholder="GitHub URL" value={form.github} onChange={(e) => setForm({ ...form, github: e.target.value })} />
+          <input className="border rounded-xl px-3 py-2 text-sm" placeholder="Facebook URL" value={form.facebook} onChange={(e) => setForm({ ...form, facebook: e.target.value })} />
+          <input className="border rounded-xl px-3 py-2 text-sm" placeholder="Instagram URL" value={form.instagram} onChange={(e) => setForm({ ...form, instagram: e.target.value })} />
+        </div>
         <div className="flex gap-2">
           <button className="flex-1 py-3 rounded-xl bg-fresh text-white font-bold">{editing ? 'Save changes' : 'Add member'}</button>
           {editing && <button type="button" onClick={() => { setEditing(null); setForm(empty); }} className="px-4 py-3 rounded-xl border">Cancel</button>}

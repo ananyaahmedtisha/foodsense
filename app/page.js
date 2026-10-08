@@ -18,16 +18,18 @@ async function getData() {
     return {
       hero, posts: demoPosts,
       videos: demoGallery.filter((g) => g.media_type === 'video'),
+      posters: demoGallery.filter((g) => g.media_type === 'poster'),
       participantCount: 127, responseCount: 100, downloadCount: 27, live: false,
     };
   }
   try {
     const sb = createServerSupabase();
-    const [respResult, postsResult, mediaResult, videosResult] = await Promise.all([
+    const [respResult, postsResult, mediaResult, videosResult, postersResult] = await Promise.all([
       sb.rpc('response_count'),
-      sb.from('posts').select('*').eq('published', true).order('created_at', { ascending: false }).limit(3),
+      sb.from('posts').select('*').eq('published', true).order('created_at', { ascending: false }).limit(2),
       sb.from('media_gallery').select('download_count'),
-      sb.from('media_gallery').select('*').eq('media_type', 'video').order('created_at', { ascending: false }).limit(3),
+      sb.from('media_gallery').select('*').eq('media_type', 'video').order('created_at', { ascending: false }).limit(2),
+      sb.from('media_gallery').select('*').eq('media_type', 'poster').order('created_at', { ascending: false }).limit(2),
     ]);
     let dl = 0;
     if (mediaResult.data) {
@@ -38,13 +40,14 @@ async function getData() {
       hero,
       posts: postsResult.data?.length ? postsResult.data : [],
       videos: videosResult.data || [],
+      posters: postersResult.data || [],
       participantCount: responses + dl,
       responseCount: responses,
       downloadCount: dl,
       live: true,
     };
   } catch {
-    return { hero, posts: [], videos: [], participantCount: 0, responseCount: 0, downloadCount: 0, live: false };
+    return { hero, posts: [], videos: [], posters: [], participantCount: 0, responseCount: 0, downloadCount: 0, live: false };
   }
 }
 
@@ -105,7 +108,7 @@ export default async function Home() {
           <Link href="/articles" className="text-sm font-semibold text-fresh">View all →</Link>
         </div>
         {data.posts.length ? (
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
             {data.posts.map((p) => (
               <Link key={p.slug || p.id} href={'/articles/' + p.slug} className="bg-white rounded-2xl shadow-soft overflow-hidden hover:shadow-lift transition">
                 {p.cover_image_url ? (
@@ -127,13 +130,36 @@ export default async function Home() {
         )}
       </section>
 
+      {data.posters?.length > 0 && (
+        <section className="mt-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-2xl font-extrabold">Fresh Posters</h2>
+            <Link href="/posters" className="text-sm font-semibold text-fresh">All posters →</Link>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {data.posters.map((m) => (
+              <Link key={m.id} href="/posters" className="bg-white rounded-2xl shadow-soft overflow-hidden hover:shadow-lift transition">
+                {m.file_url && /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(m.file_url) ? (
+                  <img src={m.file_url} alt={m.title} className="w-full aspect-[4/3] object-cover" />
+                ) : (
+                  <div className="aspect-[4/3] bg-gradient-to-br from-fresh-light via-cream to-amberwarm-light grid place-items-center text-center p-4">
+                    <p className="font-display font-bold">{m.title}</p>
+                  </div>
+                )}
+                <p className="p-3 text-sm font-display font-bold truncate">{m.title}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {data.videos.length > 0 && (
         <section className="mt-10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-2xl font-extrabold">Watch & Learn</h2>
             <Link href="/videos" className="text-sm font-semibold text-fresh">All videos →</Link>
           </div>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
             {data.videos.map((v) => {
               const yt = youtubeId(v.file_url);
               return (

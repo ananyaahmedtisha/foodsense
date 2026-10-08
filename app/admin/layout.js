@@ -8,7 +8,7 @@ const tabs = [
   { href: '/admin/homepage', label: 'Homepage' },
   { href: '/admin/posts', label: 'Articles' },
   { href: '/admin/media', label: 'Posters & Videos' },
-  { href: '/admin/team', label: 'Team' },
+  { href: '/admin/team', label: 'About' },
   { href: '/admin/surveys', label: 'Surveys' },
   { href: '/admin/categories', label: 'Segments' },
   { href: '/admin/games', label: 'Games' },

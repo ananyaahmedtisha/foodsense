@@ -24,7 +24,7 @@ export async function PUT(req) {
   if (!body.id) return NextResponse.json({ error: 'id required' }, { status: 400 });
   const sb = adminSupabase();
   const patch = {};
-  for (const k of ['name', 'role', 'bio', 'image_url', 'display_order']) {
+  for (const k of ['name', 'role', 'bio', 'image_url', 'display_order', 'linkedin', 'github', 'facebook', 'instagram']) {
     if (body[k] !== undefined) patch[k] = body[k];
   }
   const { error } = await sb.from('team_members').update(patch).eq('id', body.id);
