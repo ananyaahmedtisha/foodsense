@@ -38,8 +38,8 @@ export default async function ArticlesPage({ searchParams }) {
         ))}
       </div>
       <div className="grid md:grid-cols-3 gap-4 mt-6">
-        {posts.map((p) => (
-          <Link key={p.id} href={`/articles/${p.slug}`} className="bg-white rounded-2xl shadow-soft overflow-hidden hover:shadow-lift transition">
+        {posts.map((p, i) => (
+          <Link key={p.id} href={`/articles/${p.slug}`} className="anim-fade-up bg-white rounded-2xl shadow-soft overflow-hidden hover:shadow-lift transition" style={{ animationDelay: `${Math.min(i, 8) * 70}ms` }}>
             {p.cover_image_url ? (
               <img src={p.cover_image_url} alt="" className="h-36 w-full object-cover" />
             ) : (

@@ -170,7 +170,7 @@ export default function BudgetBiteBuilder() {
       </div>
 
       {match && (
-        <div key={match.id + seed} className="mt-4 rounded-2xl bg-gradient-to-br from-fresh-light via-cream to-amberwarm-light border p-5">
+        <div key={match.id + seed} className="anim-pop mt-4 rounded-2xl bg-gradient-to-br from-fresh-light via-cream to-amberwarm-light border p-5">
           <p className="text-xs font-bold uppercase tracking-widest text-fresh-dark">Step 3 — your upgrade</p>
           <div className="flex items-start justify-between gap-2 mt-1">
             <p className="font-display font-bold text-lg leading-snug">{match.emoji} {match.title}</p>

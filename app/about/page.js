@@ -53,8 +53,8 @@ export default async function AboutPage() {
 
       {/* Pillars */}
       <section className="grid md:grid-cols-3 gap-4 mt-6">
-        {PILLARS.map(({ Icon, title, text }) => (
-          <div key={title} className="bg-white rounded-2xl shadow-soft p-6 border-t-4 border-fresh">
+        {PILLARS.map(({ Icon, title, text }, i) => (
+          <div key={title} className="anim-fade-up bg-white rounded-2xl shadow-soft p-6 border-t-4 border-fresh" style={{ animationDelay: `${i * 90}ms` }}>
             <span className="w-10 h-10 rounded-xl bg-fresh-light grid place-items-center">
               <Icon size={19} className="text-fresh-dark" />
             </span>
@@ -68,8 +68,8 @@ export default async function AboutPage() {
       <section className="mt-12">
         <h2 className="font-display font-extrabold text-fresh text-2xl md:text-3xl tracking-wide">{copy.team_title}</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
-          {team.map((m) => (
-            <article key={m.id} className="bg-white rounded-3xl shadow-soft overflow-hidden flex flex-col">
+          {team.map((m, i) => (
+            <article key={m.id} className="anim-fade-up bg-white rounded-3xl shadow-soft overflow-hidden flex flex-col" style={{ animationDelay: `${Math.min(i, 8) * 70}ms` }}>
               <div className="h-1.5 bg-gradient-to-r from-fresh via-labteal to-amberwarm" />
               <div className="p-7 text-center flex flex-col items-center flex-1">
                 <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-fresh-light bg-gradient-to-br from-fresh to-labteal text-white grid place-items-center text-3xl font-extrabold">

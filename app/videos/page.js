@@ -40,8 +40,10 @@ export default async function VideosPage({ searchParams }) {
         </div>
       )}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
-        {items.map((v) => (
-          <VideoCard key={v.id} video={v} />
+        {items.map((v, i) => (
+          <div key={v.id} className="anim-slide-right" style={{ animationDelay: `${Math.min(i, 8) * 70}ms` }}>
+            <VideoCard video={v} />
+          </div>
         ))}
       </div>
       {items.length === 0 && <p className="text-stone-500 mt-6">No videos in this segment yet.</p>}

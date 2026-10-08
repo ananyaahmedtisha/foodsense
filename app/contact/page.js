@@ -14,7 +14,7 @@ export default async function ContactPage() {
         tone="teal"
       />
       <div className="grid md:grid-cols-2 gap-4 mt-6">
-        <div className="bg-white rounded-2xl shadow-soft p-6">
+        <div className="anim-fade-up bg-white rounded-2xl shadow-soft p-6">
           <p className="font-bold">Reach us</p>
           <div className="text-sm text-stone-600 mt-2 flex flex-col gap-1.5">
             {info.email && <p>📧 <a href={`mailto:${info.email}`} className="text-fresh font-semibold">{info.email}</a></p>}
@@ -27,7 +27,7 @@ export default async function ContactPage() {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-2xl shadow-soft p-6">
+        <div className="anim-fade-up bg-white rounded-2xl shadow-soft p-6" style={{ animationDelay: '90ms' }}>
           <p className="font-bold">Send a message</p>
           <ContactForm />
         </div>

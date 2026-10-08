@@ -22,9 +22,9 @@ export default function PlayPage({ searchParams }) {
           tone="amber"
         />
         <div className="grid md:grid-cols-2 gap-4 mt-6">
-          {games.map((g) => (
-            <Link key={g.key} href={`/play?game=${g.key}`} className="bg-white rounded-2xl shadow-soft p-8 text-center hover:shadow-lift hover:-translate-y-0.5 transition">
-              <p className="text-6xl">{g.emoji}</p>
+          {games.map((g, i) => (
+            <Link key={g.key} href={`/play?game=${g.key}`} className="anim-fade-up bg-white rounded-2xl shadow-soft p-8 text-center hover:shadow-lift hover:-translate-y-0.5 transition" style={{ animationDelay: `${i * 90}ms` }}>
+              <p className="text-6xl anim-float" style={{ animationDelay: `${i * 0.6}s` }}>{g.emoji}</p>
               <p className="font-display font-bold text-xl mt-3">{g.title}</p>
               <p className="text-sm text-stone-500 mt-1">{g.desc}</p>
               <span className="inline-block mt-4 px-5 py-2.5 rounded-full bg-fresh text-white text-sm font-bold">Play now →</span>

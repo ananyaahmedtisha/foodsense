@@ -139,11 +139,12 @@ export default function CalorieCounter() {
           ))}
         </div>
         <div className="grid sm:grid-cols-2 gap-2.5 mt-4 max-h-[520px] overflow-auto pr-1">
-          {results.map((f) => (
+          {results.map((f, i) => (
             <button
               key={f.id}
               onClick={() => pick(f.id)}
-              className={`text-left bg-white rounded-2xl p-3.5 border-2 transition hover:shadow-lift ${selectedId === f.id ? 'border-fresh shadow-soft' : 'border-transparent shadow-soft'}`}
+              style={{ animationDelay: `${(i % 12) * 35}ms` }}
+              className={`anim-fade-up text-left bg-white rounded-2xl p-3.5 border-2 transition hover:shadow-lift ${selectedId === f.id ? 'border-fresh shadow-soft' : 'border-transparent shadow-soft'}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="font-display font-bold text-[15px] leading-snug">{f.name}</p>

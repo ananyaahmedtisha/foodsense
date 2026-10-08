@@ -87,7 +87,7 @@ export default async function Home() {
             <p className="font-display font-bold flex items-center gap-2">
               <Users size={18} /> Impact Tracker
             </p>
-            {data.live && <span className="text-xs px-2 py-1 rounded-full bg-white/15">LIVE</span>}
+            {data.live && <span className="text-xs px-2 py-1 rounded-full bg-white/15 inline-flex items-center gap-1.5"><span className="anim-pulse-dot inline-block w-1.5 h-1.5 rounded-full bg-fresh" />LIVE</span>}
           </div>
           <p className="text-5xl font-display font-extrabold mt-4">
             {data.participantCount}

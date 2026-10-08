@@ -72,7 +72,7 @@ export default function RedFlagGreenFlag() {
 
   if (done) {
     return (
-      <div className="bg-white rounded-2xl shadow-soft p-8 text-center">
+      <div className="anim-pop bg-white rounded-2xl shadow-soft p-8 text-center">
         <p className="text-sm uppercase tracking-widest text-labteal font-bold">Your Food Safety IQ</p>
         <p className="font-display text-6xl font-extrabold mt-2">{iq}<span className="text-2xl">/100</span></p>
         <p className="text-stone-600 mt-2">{score} of {cards.length} correct • {iq >= 80 ? 'Kitchen Pro! Share it.' : iq >= 50 ? 'Solid — review the red flags.' : 'Time to browse the Science Pantry.'}</p>

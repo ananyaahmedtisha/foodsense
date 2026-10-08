@@ -46,10 +46,10 @@ export default async function PostersPage({ searchParams }) {
         </div>
       )}
       <div className="masonry mt-6">
-        {items.map((m) => (
-          <div key={m.id} className="bg-white rounded-2xl shadow-soft overflow-hidden">
+        {items.map((m, i) => (
+          <div key={m.id} className="anim-fade-up bg-white rounded-2xl shadow-soft overflow-hidden" style={{ animationDelay: `${Math.min(i, 8) * 70}ms` }}>
             {isImage(m.file_url) ? (
-              <img src={m.file_url} alt={m.title} className="w-full object-cover" />
+              <div className="zoom-hover"><img src={m.file_url} alt={m.title} className="w-full object-cover" /></div>
             ) : (
               <div className="aspect-[3/4] bg-gradient-to-br from-fresh-light via-cream to-amberwarm-light grid place-items-center text-center p-6">
                 <p className="font-display font-extrabold text-xl">{m.title}</p>

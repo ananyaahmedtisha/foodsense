@@ -24,9 +24,11 @@ export default async function SurveysPage() {
         tone="teal"
       />
       <div className="grid md:grid-cols-2 gap-4 mt-6">
-        {surveys.map((s) => (
-          <Link key={s.id} href={`/surveys/${s.id}`} className="bg-white rounded-2xl shadow-soft p-6 hover:shadow-lift transition">
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-fresh-light text-fresh-dark">ACTIVE</span>
+        {surveys.map((s, i) => (
+          <Link key={s.id} href={`/surveys/${s.id}`} className="anim-fade-up bg-white rounded-2xl shadow-soft p-6 hover:shadow-lift transition" style={{ animationDelay: `${Math.min(i, 8) * 70}ms` }}>
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-fresh-light text-fresh-dark">
+              <span className="anim-pulse-dot inline-block w-1.5 h-1.5 rounded-full bg-fresh" />ACTIVE
+            </span>
             <p className="font-display font-bold text-lg mt-2">{s.title}</p>
             <p className="text-sm text-fresh font-semibold mt-2">Take survey →</p>
           </Link>
