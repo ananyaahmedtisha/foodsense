@@ -78,10 +78,15 @@ h1, h2, h3, .font-display {
 .dark .shadow-lift { box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.7); }
 .dark .hover\:bg-cream:hover { background-color: #292524; }
 .dark .hover\:bg-fresh-light:hover { background-color: #14532d; }
-.dark .from-fresh-light { --tw-gradient-from: #14532d; }
-.dark .via-cream { --tw-gradient-via: #1c1917; }
-.dark .to-labteal-light { --tw-gradient-to: #134e4a; }
-.dark .to-amberwarm-light { --tw-gradient-to: #451a03; }
+/* Gradient stops: Tailwind bakes `via` colors literally into --tw-gradient-stops,
+   so a dark theme must rebuild the full stops value, not just the color var. */
+.dark .from-fresh-light { --tw-gradient-from: #14532d var(--tw-gradient-from-position); }
+.dark .via-cream {
+  --tw-gradient-to: rgb(28 25 23 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), #1c1917 var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+.dark .to-labteal-light { --tw-gradient-to: #134e4a var(--tw-gradient-to-position); }
+.dark .to-amberwarm-light { --tw-gradient-to: #451a03 var(--tw-gradient-to-position); }
 .dark .bg-fresh-light { background-color: #14532d; }
 .dark .text-fresh-dark { color: #86efac; }
 .dark .bg-amberwarm-light { background-color: #451a03; }

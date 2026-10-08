@@ -123,9 +123,9 @@ export default async function Home() {
           { href: '/calories', emoji: '🍛', label: 'Calorie Counter', bg: 'from-orange-100 to-amber-50' },
           { href: '/play', emoji: '🎮', label: 'Play & Learn', bg: 'from-green-50 to-teal-50' },
         ].map((t) => (
-          <Link key={t.href} href={t.href} className={`bg-gradient-to-br ${t.bg} border border-white/70 rounded-2xl p-4 shadow-soft hover:shadow-lift hover:-translate-y-0.5 transition flex items-center gap-3`}>
+          <Link key={t.href} href={t.href} className={`bg-gradient-to-br ${t.bg} dark:from-stone-800 dark:to-stone-900 border border-white/70 dark:border-stone-700 rounded-2xl p-4 shadow-soft hover:shadow-lift hover:-translate-y-0.5 transition flex items-center gap-3`}>
             <span className="text-3xl">{t.emoji}</span>
-            <span className="font-display font-bold text-[15px] leading-tight">{t.label}</span>
+            <span className="font-display font-bold text-[15px] leading-tight text-stone-800 dark:text-white">{t.label}</span>
           </Link>
         ))}
       </section>
