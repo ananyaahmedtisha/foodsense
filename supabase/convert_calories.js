@@ -33,10 +33,15 @@ const OUT = path.join(__dirname, '..', 'lib', 'calorieFoods.js');
 
 const lines = parseCSV(fs.readFileSync(SRC, 'utf8'));
 const head = lines[0];
-const foods = lines.slice(1).map((r) => {
+const foods = [];
+const seen = new Set();
+for (const r of lines.slice(1)) {
   const o = {};
   head.forEach((h, i) => { o[h.trim()] = (r[i] || '').trim(); });
-  return {
+  const key = o.food_name_en.trim().toLowerCase();
+  if (seen.has(key)) continue; // one entry per food — portions handled by the calculator
+  seen.add(key);
+  foods.push({
     id: o.food_id,
     category: o.category,
     name: o.food_name_en,
@@ -51,8 +56,8 @@ const foods = lines.slice(1).map((r) => {
     fiber: Number(o.fiber_g) || 0,
     note: o.calorie_source_note,
     recipe: o.is_recipe_based === 'True',
-  };
-});
+  });
+}
 
 const cats = [...new Set(foods.map((f) => f.category))];
 const js = `// Generated from bangladeshi_food_calorie_database.csv — ${foods.length} foods. Do not edit by hand.
