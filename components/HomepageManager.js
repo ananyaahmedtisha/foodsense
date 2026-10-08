@@ -41,7 +41,7 @@ export default function HomepageManager() {
       <label className="text-sm font-semibold">Description
         <textarea className="block w-full border rounded-xl px-3 py-2.5 mt-1 font-normal" rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
       </label>
-      <label className="text-sm font-semibold">Lives goal (number shown in Impact Tracker)
+      <label className="text-sm font-semibold">Engagement goal (number shown in Impact Tracker)
         <input type="number" min="1" className="block w-full border rounded-xl px-3 py-2.5 mt-1 font-normal" value={form.goal} onChange={(e) => setForm({ ...form, goal: Number(e.target.value) })} />
       </label>
       <div className="rounded-xl bg-cream border p-4">

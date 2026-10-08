@@ -19,7 +19,7 @@ async function getData() {
       hero, posts: demoPosts,
       videos: demoGallery.filter((g) => g.media_type === 'video'),
       posters: demoGallery.filter((g) => g.media_type === 'poster'),
-      participantCount: 127, responseCount: 100, downloadCount: 27, live: false,
+      participantCount: 127, responseCount: 100, downloadCount: 20, viewCount: 7, live: false,
     };
   }
   try {
@@ -27,13 +27,17 @@ async function getData() {
     const [respResult, postsResult, mediaResult, videosResult, postersResult] = await Promise.all([
       sb.rpc('response_count'),
       sb.from('posts').select('*').eq('published', true).order('created_at', { ascending: false }).limit(2),
-      sb.from('media_gallery').select('download_count'),
+      sb.from('media_gallery').select('media_type,download_count'),
       sb.from('media_gallery').select('*').eq('media_type', 'video').order('created_at', { ascending: false }).limit(2),
       sb.from('media_gallery').select('*').eq('media_type', 'poster').order('created_at', { ascending: false }).limit(2),
     ]);
     let dl = 0;
+    let vw = 0;
     if (mediaResult.data) {
-      for (const m of mediaResult.data) dl += m.download_count || 0;
+      for (const m of mediaResult.data) {
+        if (m.media_type === 'video') vw += m.download_count || 0;
+        else dl += m.download_count || 0;
+      }
     }
     const responses = respResult.data ?? 0;
     return {
@@ -41,13 +45,14 @@ async function getData() {
       posts: postsResult.data?.length ? postsResult.data : [],
       videos: videosResult.data || [],
       posters: postersResult.data || [],
-      participantCount: responses + dl,
+      participantCount: responses + dl + vw,
       responseCount: responses,
       downloadCount: dl,
+      viewCount: vw,
       live: true,
     };
   } catch {
-    return { hero, posts: [], videos: [], posters: [], participantCount: 0, responseCount: 0, downloadCount: 0, live: false };
+    return { hero, posts: [], videos: [], posters: [], participantCount: 0, responseCount: 0, downloadCount: 0, viewCount: 0, live: false };
   }
 }
 
@@ -83,22 +88,26 @@ export default async function Home() {
           </div>
           <p className="text-5xl font-display font-extrabold mt-4">
             {data.participantCount}
-            <span className="text-lg font-medium text-white/70"> / {goal} lives</span>
+            <span className="text-lg font-medium text-white/70"> / {goal} engagements</span>
           </p>
           <div className="h-3 bg-white/15 rounded-full mt-3 overflow-hidden">
             <div className="h-full bg-fresh" style={{ width: pct + '%' }} />
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-4 text-sm">
+          <div className="grid grid-cols-3 gap-2 mt-4 text-sm">
             <div className="bg-white/10 rounded-xl p-3">
               <p className="font-bold text-lg">{data.responseCount}</p>
-              <p className="text-white/60 text-xs">survey responses — one per participant</p>
+              <p className="text-white/60 text-xs">survey responses</p>
             </div>
             <div className="bg-white/10 rounded-xl p-3">
               <p className="font-bold text-lg">{data.downloadCount}</p>
-              <p className="text-white/60 text-xs">poster downloads — counted on every click</p>
+              <p className="text-white/60 text-xs">poster downloads</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-3">
+              <p className="font-bold text-lg">{data.viewCount}</p>
+              <p className="text-white/60 text-xs">video views</p>
             </div>
           </div>
-          <p className="text-xs text-white/60 mt-3">Lives = survey responses + poster downloads. Goal: {goal} lives, Aug–Nov 2026.</p>
+          <p className="text-xs text-white/60 mt-3">Engagements = survey responses + poster downloads + video views. Goal: {goal}, Aug–Nov 2026.</p>
         </div>
       </section>
 

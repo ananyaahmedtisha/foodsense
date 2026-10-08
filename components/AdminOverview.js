@@ -41,11 +41,11 @@ export default function AdminOverview() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-4 gap-4">
         <div className="bg-white rounded-2xl shadow-soft p-6">
-          <p className="text-sm text-stone-500">Lives reached</p>
+          <p className="text-sm text-stone-500">Engagements</p>
           <p className="font-display text-4xl font-extrabold">{a.lives_reached}<span className="text-sm font-medium text-stone-400"> / {goal}</span></p>
-          <p className="text-xs text-stone-400 mt-1">survey responses + poster downloads • goal set in Admin → Homepage</p>
+          <p className="text-xs text-stone-400 mt-1">responses + downloads + views • goal in Admin → Homepage</p>
         </div>
         <div className="bg-white rounded-2xl shadow-soft p-6">
           <p className="text-sm text-stone-500">Survey responses</p>
@@ -54,6 +54,10 @@ export default function AdminOverview() {
         <div className="bg-white rounded-2xl shadow-soft p-6">
           <p className="text-sm text-stone-500">Poster downloads</p>
           <p className="font-display text-4xl font-extrabold">{a.downloads}</p>
+        </div>
+        <div className="bg-white rounded-2xl shadow-soft p-6">
+          <p className="text-sm text-stone-500">Video views</p>
+          <p className="font-display text-4xl font-extrabold">{a.views ?? 0}</p>
         </div>
       </div>
 

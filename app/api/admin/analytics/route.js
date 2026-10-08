@@ -34,7 +34,7 @@ export async function GET() {
     sb.from('surveys').select('*').order('created_at'),
     sb.from('survey_questions').select('*'),
     sb.from('survey_responses').select('survey_id, answers'),
-    sb.from('media_gallery').select('download_count'),
+    sb.from('media_gallery').select('media_type,download_count'),
     sb.from('site_settings').select('*'),
   ]);
 
@@ -68,14 +68,16 @@ export async function GET() {
   }
 
   const totalResponses = (responses || []).length;
-  const downloads = (media || []).reduce((s, m) => s + (m.download_count || 0), 0);
+  const downloads = (media || []).filter((m) => m.media_type !== 'video').reduce((s, m) => s + (m.download_count || 0), 0);
+  const views = (media || []).filter((m) => m.media_type === 'video').reduce((s, m) => s + (m.download_count || 0), 0);
   return NextResponse.json({
     surveys: bySurvey,
     surveyList: (surveys || []).map((s) => ({ id: s.id, title: s.title, is_active: s.is_active })),
     impact,
-    lives_reached: totalResponses + downloads,
+    lives_reached: totalResponses + downloads + views,
     total_responses: totalResponses,
     downloads,
+    views,
     comparison,
   });
 }
