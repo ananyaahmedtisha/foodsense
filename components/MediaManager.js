@@ -100,7 +100,7 @@ export default function MediaManager() {
             <div key={it.id} className="border rounded-xl p-3 flex items-center gap-3">
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm truncate">{it.title}</p>
-                <p className="text-xs text-stone-500">{it.category || 'no segment'} • {it.download_count || 0} downloads</p>
+                <p className="text-xs text-stone-500">{it.category || 'no segment'} • {it.media_type === 'video' ? `${it.download_count || 0} views` : `${it.download_count || 0} downloads`}</p>
               </div>
               <button onClick={() => edit(it)} className="text-xs font-bold px-3 py-1.5 rounded-full border">Edit</button>
               <button onClick={() => del(it.id)} className="text-xs font-bold px-3 py-1.5 rounded-full border text-red-600">Delete</button>

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
-import { Shuffle, MapPin, Wallet, Sparkles, ListOrdered } from 'lucide-react';
+import { Shuffle, MapPin, Wallet, Sparkles, ListOrdered, Dices } from 'lucide-react';
 import { noodleUpgrades } from '@/lib/demoData';
 
 const GOALS = [
@@ -13,7 +13,28 @@ const STAPLE_INFO = {
   noodles: { price: '৳25–35', base: 30, blurb: 'Filling but low in protein, high in salt.' },
   rice: { price: 'Free (leftover)', base: 0, blurb: 'Plain carbs — needs protein and greens.' },
   bread: { price: '৳10–15', base: 10, blurb: 'Quick energy but you get hungry fast.' },
+  chira: { price: '৳10–15', base: 12, blurb: 'Light flattened rice — needs protein to keep you full.' },
+  potato: { price: '৳5–10', base: 8, blurb: 'Filling and cheap — keep the skin for fibre.' },
 };
+
+function stapleIdOf(prompt, meta) {
+  if (meta?.stapleId) return meta.stapleId;
+  const t = (prompt || '').toLowerCase();
+  if (t.includes('rice')) return 'rice';
+  if (t.includes('bread') || t.includes('pao')) return 'bread';
+  if (t.includes('chira')) return 'chira';
+  if (t.includes('potato') || t.includes('alu')) return 'potato';
+  return 'noodles';
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 function guessGoal(text) {
   const t = (text || '').toLowerCase();
@@ -72,7 +93,7 @@ export default function BudgetBiteBuilder() {
           setCards(j.items.map((c) => ({
             id: c.id,
             staple: c.prompt,
-            stapleId: c.prompt.toLowerCase().includes('rice') ? 'rice' : c.prompt.toLowerCase().includes('bread') ? 'bread' : 'noodles',
+            stapleId: stapleIdOf(c.prompt, c.meta),
             goal: c.meta?.goal || guessGoal(c.prompt + ' ' + c.explanation),
             title: cleanTitle(c.meta?.title || c.prompt),
             detail: c.explanation,
@@ -91,12 +112,22 @@ export default function BudgetBiteBuilder() {
     return [...map.entries()].map(([id, name]) => ({ id, name }));
   }, [cards]);
 
-  const match = useMemo(() => {
+  const order = useMemo(() => {
     const pool = cards.filter((c) => c.stapleId === stapleId && c.goal === goal);
     const list = pool.length ? pool : cards.filter((c) => c.stapleId === stapleId);
-    if (!list.length) return null;
-    return list[seed % list.length];
-  }, [cards, stapleId, goal, seed]);
+    return shuffle(list); // fresh order every selection — walk through all before any repeat
+  }, [cards, stapleId, goal]);
+
+  const match = order.length ? order[seed % order.length] : null;
+
+  function surprise() {
+    const randomCard = cards[Math.floor(Math.random() * cards.length)];
+    if (randomCard) {
+      setStapleId(randomCard.stapleId);
+      setGoal(randomCard.goal);
+    }
+    setSeed(Math.floor(Math.random() * 1000));
+  }
 
   const info = STAPLE_INFO[stapleId] || { price: '~৳30', base: 30, blurb: '' };
   const goalInfo = GOALS.find((g) => g.id === goal) || GOALS[0];
@@ -117,7 +148,7 @@ export default function BudgetBiteBuilder() {
           return (
             <button key={s.id} onClick={() => { setStapleId(s.id); setSeed(0); }}
               className={`rounded-xl border p-3 text-center transition ${stapleId === s.id ? 'bg-stone-900 text-white border-stone-900' : 'bg-cream hover:border-fresh'}`}>
-              <span className="text-3xl">{s.id === 'noodles' ? '🍜' : s.id === 'rice' ? '🍚' : s.id === 'bread' ? '🍞' : '🍽️'}</span>
+              <span className="text-3xl">{s.id === 'noodles' ? '🍜' : s.id === 'rice' ? '🍚' : s.id === 'bread' ? '🍞' : s.id === 'chira' ? '🥣' : s.id === 'potato' ? '🥔' : '🍽️'}</span>
               <span className="block text-xs font-bold mt-1 leading-tight">{s.name}</span>
               <span className={`block text-[11px] mt-0.5 ${stapleId === s.id ? 'text-white/80' : 'text-stone-400'}`}>{si.price}</span>
             </button>
@@ -171,6 +202,9 @@ export default function BudgetBiteBuilder() {
           <p className="text-xs text-stone-500 mt-3 flex items-center gap-1"><MapPin size={12} /> Everything available in Badda kitchen markets & hostel shops.</p>
           <button onClick={() => setSeed((s) => s + 1)} className="mt-3 text-sm font-bold text-fresh flex items-center gap-1">
             <Shuffle size={14} /> Show another idea
+          </button>
+          <button onClick={surprise} className="mt-2 text-sm font-bold text-stone-500 flex items-center gap-1">
+            <Dices size={14} /> Surprise me — new random combo
           </button>
         </div>
       )}

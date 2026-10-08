@@ -10,18 +10,40 @@ function rotateDaily(cards) {
   return [...cards.slice(shift), ...cards.slice(0, shift)];
 }
 
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const MIN_SESSION = 6;
+const MAX_SESSION = 10; // each game serves a fresh random 6–10 cards out of 100+
+
 export default function RedFlagGreenFlag() {
+  const [pool, setPool] = useState([]);
   const [cards, setCards] = useState(flagCards.map((c) => ({ prompt: c.habit, verdict: c.verdict, explanation: c.explain })));
   const [idx, setIdx] = useState(0);
   const [score, setScore] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
 
+  function deal(full) {
+    const n = MIN_SESSION + Math.floor(Math.random() * (MAX_SESSION - MIN_SESSION + 1));
+    return shuffle(full).slice(0, n);
+  }
+
   useEffect(() => {
     fetch('/api/games?key=redflag')
       .then((r) => r.json())
       .then((j) => {
-        if (j.items?.length >= 2) setCards(rotateDaily(j.items));
+        const full = j.items?.length >= 2
+          ? rotateDaily(j.items)
+          : flagCards.map((c) => ({ prompt: c.habit, verdict: c.verdict, explanation: c.explain }));
+        setPool(full);
+        setCards(deal(full));
       })
       .catch(() => {});
   }, []);
@@ -40,7 +62,11 @@ export default function RedFlagGreenFlag() {
     else { setIdx(idx + 1); setRevealed(false); }
   }
 
-  function reset() { setIdx(0); setScore(0); setRevealed(false); setDone(false); }
+  function reset() {
+    // Brand-new random set every replay — 100+ cards means repeats are rare.
+    setCards(deal(pool.length >= 2 ? pool : cards));
+    setIdx(0); setScore(0); setRevealed(false); setDone(false);
+  }
 
   const iq = Math.round((score / cards.length) * 100);
 
@@ -60,7 +86,7 @@ export default function RedFlagGreenFlag() {
 
   return (
     <div className="bg-white rounded-2xl shadow-soft p-6 max-w-md mx-auto">
-      <div className="flex justify-between text-sm text-stone-500 mb-3"><span>Card {idx + 1}/{cards.length} • new order daily</span><span>Score: {score}</span></div>
+      <div className="flex justify-between text-sm text-stone-500 mb-3"><span>Card {idx + 1}/{cards.length} • fresh set every game</span><span>Score: {score}</span></div>
       <div className={`card-flip ${revealed ? 'flipped' : ''}`}>
         <div className="card-flip-inner relative min-h-[220px]">
           <div className="card-face absolute inset-0 bg-cream border rounded-2xl p-6 grid place-items-center text-center">
