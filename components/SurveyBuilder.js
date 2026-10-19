@@ -5,7 +5,7 @@ export default function SurveyBuilder() {
   const [surveys, setSurveys] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [questions, setQuestions] = useState([{ question_text: '', question_type: 'multiple_choice', options: ['Option 1', 'Option 2'] }]);
+  const [questions, setQuestions] = useState([{ question_text: '', question_type: 'multiple_choice', options: ['Option 1', 'Option 2'], is_required: true }]);
   const [result, setResult] = useState('');
   const [openQs, setOpenQs] = useState({});
   const [correctEdits, setCorrectEdits] = useState({});
@@ -19,7 +19,7 @@ export default function SurveyBuilder() {
   }
   useEffect(() => { load(); }, []);
 
-  function addQ() { setQuestions((q) => [...q, { question_text: '', question_type: 'multiple_choice', options: ['Option 1', 'Option 2'] }]); }
+  function addQ() { setQuestions((q) => [...q, { question_text: '', question_type: 'multiple_choice', options: ['Option 1', 'Option 2'], is_required: true }]); }
 
   async function activate() {
     if (!title.trim()) { setResult('Give the survey a title first.'); return; }
@@ -27,7 +27,7 @@ export default function SurveyBuilder() {
     const j = await res.json();
     if (j.ok && !j.demo) {
       setResult('Live! Share: ' + window.location.origin + '/surveys/' + j.id);
-      setTitle(''); setDescription(''); setQuestions([{ question_text: '', question_type: 'multiple_choice', options: ['Option 1', 'Option 2'] }]);
+      setTitle(''); setDescription(''); setQuestions([{ question_text: '', question_type: 'multiple_choice', options: ['Option 1', 'Option 2'], is_required: true }]);
       load();
     } else if (j.demo) setResult('Demo mode — connect Supabase to activate.');
     else setResult('Error: ' + j.error);
@@ -81,6 +81,12 @@ export default function SurveyBuilder() {
     setOpenQs((o) => ({ ...o, [q.survey_id]: j.items || [] }));
   }
 
+  async function saveRequired(q, val) {
+    await fetch('/api/admin/questions', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: q.id, is_required: val }) });
+    const j = await fetch('/api/admin/questions?survey_id=' + q.survey_id).then((r) => r.json());
+    setOpenQs((o) => ({ ...o, [q.survey_id]: j.items || [] }));
+  }
+
   return (
     <div className="grid lg:grid-cols-2 gap-6 items-start">
       <div className="bg-white rounded-2xl shadow-soft p-6">
@@ -114,6 +120,14 @@ export default function SurveyBuilder() {
                 onChange={(e) => setQuestions((qs) => qs.map((x, j) => j === i ? { ...x, options: e.target.value.split('\n') } : x))}
                 placeholder="One option per line" />
             )}
+            <label className="flex items-center gap-2 text-xs font-semibold mt-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={q.is_required !== false}
+                onChange={(e) => setQuestions((qs) => qs.map((x, j) => j === i ? { ...x, is_required: e.target.checked } : x))}
+              />
+              Mandatory — students must answer this before submitting
+            </label>
           </div>
         ))}
         <div className="flex gap-2 mt-4">
@@ -156,7 +170,12 @@ export default function SurveyBuilder() {
                 <div className="mt-2 border-t pt-2 flex flex-col gap-2">
                   {openQs[s.id].map((q) => (
                     <div key={q.id} className="text-xs">
-                      <p className="font-semibold">{q.question_text} <span className="font-normal text-stone-400">({q.question_type})</span></p>
+                      <p className="font-semibold">
+                        {q.question_text} <span className="font-normal text-stone-400">({q.question_type})</span>{' '}
+                        <span className={`font-normal ${q.is_required === false ? 'text-stone-400' : 'text-fresh'}`}>
+                          • {q.is_required === false ? 'optional' : 'mandatory'}
+                        </span>
+                      </p>
                       {q.question_type === 'multiple_choice' ? (
                         <div className="flex gap-1.5 mt-1">
                           <select className="border rounded-lg px-1.5 py-1 flex-1"
@@ -170,6 +189,14 @@ export default function SurveyBuilder() {
                       ) : (
                         <p className="text-stone-400">Options: {(q.options || []).join(' / ') || 'free text'}</p>
                       )}
+                      <label className="flex items-center gap-1.5 mt-1 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={q.is_required !== false}
+                          onChange={(e) => saveRequired(q, e.target.checked)}
+                        />
+                        Mandatory
+                      </label>
                     </div>
                   ))}
                 </div>

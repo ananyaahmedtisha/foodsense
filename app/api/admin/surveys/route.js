@@ -22,7 +22,13 @@ export async function POST(req) {
   if (questions?.length) {
     const rows = questions
       .filter((q) => q.question_text?.trim())
-      .map((q) => ({ survey_id: survey.id, question_text: q.question_text, question_type: q.question_type, options: q.options || [] }));
+      .map((q) => ({
+        survey_id: survey.id,
+        question_text: q.question_text,
+        question_type: q.question_type,
+        options: q.options || [],
+        is_required: q.is_required !== false,
+      }));
     if (rows.length) await sb.from('survey_questions').insert(rows);
   }
   return NextResponse.json({ ok: true, id: survey.id });

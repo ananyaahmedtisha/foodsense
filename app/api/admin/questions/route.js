@@ -11,14 +11,15 @@ export async function GET(req) {
   return NextResponse.json({ items: data });
 }
 
-// Set the correct answer used for auto-scoring
+// Set the correct answer used for auto-scoring, and/or the required flag
 export async function PUT(req) {
-  const { id, correct_answer, question_text } = await req.json();
+  const { id, correct_answer, question_text, is_required } = await req.json();
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
   const sb = adminSupabase();
   const patch = {};
   if (correct_answer !== undefined) patch.correct_answer = correct_answer;
   if (question_text !== undefined) patch.question_text = question_text;
+  if (is_required !== undefined) patch.is_required = !!is_required;
   const { error } = await sb.from('survey_questions').update(patch).eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
