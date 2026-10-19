@@ -30,6 +30,7 @@ export default async function SurveysPage() {
               <span className="anim-pulse-dot inline-block w-1.5 h-1.5 rounded-full bg-fresh" />ACTIVE
             </span>
             <p className="font-display font-bold text-lg mt-2">{s.title}</p>
+            {s.description && <p className="text-sm text-stone-500 mt-1 line-clamp-2">{s.description}</p>}
             <p className="text-sm text-fresh font-semibold mt-2">Take survey →</p>
           </Link>
         ))}

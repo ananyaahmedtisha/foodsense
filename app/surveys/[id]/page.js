@@ -25,7 +25,12 @@ export default async function TakeSurvey({ params }) {
   return (
     <div className="py-8 max-w-2xl mx-auto">
       <h1 className="font-display text-2xl font-extrabold">{survey.title}</h1>
-      <p className="text-sm text-stone-500 mt-1">Anonymous • ~2 minutes • helps us measure 30% improvement</p>
+      {survey.description && (
+        <div className="bg-white rounded-2xl shadow-soft p-5 mt-3 text-sm text-stone-600 leading-relaxed whitespace-pre-wrap">
+          {survey.description}
+        </div>
+      )}
+      <p className="text-sm text-stone-500 mt-3">Anonymous • ~2 minutes • helps us measure 30% improvement</p>
       <SurveyTaker surveyId={survey.id} questions={questions} />
     </div>
   );

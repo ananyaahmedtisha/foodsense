@@ -13,11 +13,11 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  const { title, questions } = await req.json();
+  const { title, questions, description } = await req.json();
   if (!title) return NextResponse.json({ error: 'title required' }, { status: 400 });
   if (!isSupabaseConfigured()) return NextResponse.json({ ok: true, demo: true, id: 's1' });
   const sb = adminSupabase();
-  const { data: survey, error } = await sb.from('surveys').insert({ title, is_active: true }).select().single();
+  const { data: survey, error } = await sb.from('surveys').insert({ title, description: description || '', is_active: true }).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (questions?.length) {
     const rows = questions
@@ -34,6 +34,7 @@ export async function PUT(req) {
   const sb = adminSupabase();
   const patch = {};
   if (body.title !== undefined) patch.title = body.title;
+  if (body.description !== undefined) patch.description = body.description;
   if (body.is_active !== undefined) patch.is_active = body.is_active;
   const { error } = await sb.from('surveys').update(patch).eq('id', body.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

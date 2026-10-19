@@ -4,10 +4,14 @@ import { useEffect, useState } from 'react';
 export default function SurveyBuilder() {
   const [surveys, setSurveys] = useState([]);
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [questions, setQuestions] = useState([{ question_text: '', question_type: 'multiple_choice', options: ['Option 1', 'Option 2'] }]);
   const [result, setResult] = useState('');
   const [openQs, setOpenQs] = useState({});
   const [correctEdits, setCorrectEdits] = useState({});
+  const [editingSurvey, setEditingSurvey] = useState(null);
+  const [editText, setEditText] = useState({ title: '', description: '' });
+  const [editMsg, setEditMsg] = useState('');
 
   async function load() {
     const j = await fetch('/api/admin/surveys').then((r) => r.json());
@@ -19,14 +23,29 @@ export default function SurveyBuilder() {
 
   async function activate() {
     if (!title.trim()) { setResult('Give the survey a title first.'); return; }
-    const res = await fetch('/api/admin/surveys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, questions }) });
+    const res = await fetch('/api/admin/surveys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, description, questions }) });
     const j = await res.json();
     if (j.ok && !j.demo) {
       setResult('Live! Share: ' + window.location.origin + '/surveys/' + j.id);
-      setTitle(''); setQuestions([{ question_text: '', question_type: 'multiple_choice', options: ['Option 1', 'Option 2'] }]);
+      setTitle(''); setDescription(''); setQuestions([{ question_text: '', question_type: 'multiple_choice', options: ['Option 1', 'Option 2'] }]);
       load();
     } else if (j.demo) setResult('Demo mode — connect Supabase to activate.');
     else setResult('Error: ' + j.error);
+  }
+
+  function editSurvey(s) {
+    if (editingSurvey === s.id) { setEditingSurvey(null); return; }
+    setEditingSurvey(s.id);
+    setEditText({ title: s.title || '', description: s.description || '' });
+    setEditMsg('');
+  }
+
+  async function saveSurveyMeta(id) {
+    setEditMsg('Saving…');
+    const res = await fetch('/api/admin/surveys', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, title: editText.title, description: editText.description }) });
+    const j = await res.json();
+    setEditMsg(j.ok ? 'Saved.' : 'Error: ' + j.error);
+    if (j.ok) load();
   }
 
   async function toggle(s) {
@@ -67,6 +86,15 @@ export default function SurveyBuilder() {
       <div className="bg-white rounded-2xl shadow-soft p-6">
         <p className="font-display font-bold text-lg">Visual Survey Builder 📋</p>
         <input className="border rounded-xl px-3 py-2.5 w-full mt-3" placeholder="Survey title e.g. Endline — Nov 2026" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <label className="text-sm font-semibold mt-3 block">Description (shown above the form)
+          <textarea
+            className="border rounded-xl px-3 py-2.5 w-full mt-1 font-normal leading-relaxed"
+            rows={4}
+            placeholder="Explain what this survey is for, who it's for, and how the answers are used. A short paragraph is enough."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </label>
         {questions.map((q, i) => (
           <div key={i} className="border rounded-xl p-4 mt-3">
             <div className="flex justify-between items-center">
@@ -99,11 +127,27 @@ export default function SurveyBuilder() {
         <div className="flex flex-col gap-2 mt-3">
           {surveys.map((s) => (
             <div key={s.id} className="border rounded-xl p-3">
-              <p className="font-semibold text-sm">{s.title}</p>
-              <p className="text-xs text-stone-500">{s.is_active ? 'Active' : 'Paused'} • {s.responses ?? 0} responses</p>
-              <p className="text-xs text-stone-400 break-all">/surveys/{s.id}</p>
+              {editingSurvey === s.id ? (
+                <div className="flex flex-col gap-2">
+                  <input className="border rounded-lg px-2 py-1.5 text-sm font-semibold" value={editText.title} onChange={(e) => setEditText({ ...editText, title: e.target.value })} />
+                  <textarea className="border rounded-lg px-2 py-1.5 text-sm" rows={4} placeholder="Description shown above the form…" value={editText.description} onChange={(e) => setEditText({ ...editText, description: e.target.value })} />
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => saveSurveyMeta(s.id)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-fresh text-white">Save</button>
+                    <button onClick={() => setEditingSurvey(null)} className="text-xs font-bold px-3 py-1.5 rounded-full border">Cancel</button>
+                    {editMsg && <span className="text-xs">{editMsg}</span>}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="font-semibold text-sm">{s.title}</p>
+                  {s.description && <p className="text-xs text-stone-500 mt-1 whitespace-pre-wrap">{s.description}</p>}
+                  <p className="text-xs text-stone-500 mt-1">{s.is_active ? 'Active' : 'Paused'} • {s.responses ?? 0} responses</p>
+                  <p className="text-xs text-stone-400 break-all">/surveys/{s.id}</p>
+                </>
+              )}
               <div className="flex flex-wrap gap-2 mt-2">
                 <button onClick={() => toggle(s)} className="text-xs font-bold px-3 py-1.5 rounded-full border">{s.is_active ? 'Pause' : 'Activate'}</button>
+                <button onClick={() => editSurvey(s)} className="text-xs font-bold px-3 py-1.5 rounded-full border">Edit</button>
                 <button onClick={() => viewQuestions(s)} className="text-xs font-bold px-3 py-1.5 rounded-full border">Questions</button>
                 <button onClick={() => downloadCSV(s)} className="text-xs font-bold px-3 py-1.5 rounded-full bg-fresh text-white">⬇ CSV ({s.responses ?? 0})</button>
                 <button onClick={() => del(s.id)} className="text-xs font-bold px-3 py-1.5 rounded-full border text-red-600">Delete</button>
