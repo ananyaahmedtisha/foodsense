@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   normalizeType,
   optionsOf,
@@ -72,10 +73,42 @@ export default function SurveyTaker({ surveyId, questions }) {
 
   if (done) {
     return (
-      <div className="bg-white rounded-2xl shadow-soft p-8 text-center mt-6 anim-pop">
-        <p className="text-4xl">✅</p>
-        <p className="font-display font-bold text-xl mt-2">Thank you!</p>
-        <p className="text-sm text-stone-500">Your response counts toward our impact goal.</p>
+      <div className="mt-6 anim-pop">
+        <div className="bg-white rounded-2xl shadow-soft p-8 text-center">
+          <p className="text-4xl">✅</p>
+          <p className="font-display font-bold text-xl mt-2">Thank you!</p>
+          <p className="text-sm text-stone-500 mt-1">Your response counts toward our impact goal.</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-fresh-light via-cream to-labteal-light rounded-2xl shadow-soft p-6 mt-4">
+          <p className="font-display font-bold text-lg text-center">While you’re here, keep learning 🌱</p>
+          <p className="text-sm text-stone-600 text-center mt-1">Totally optional — two quick ways to use what you just shared.</p>
+
+          <div className="grid sm:grid-cols-2 gap-4 mt-4">
+            <Link
+              href="/articles"
+              className="anim-fade-up bg-white rounded-xl border p-5 hover:shadow-lift hover:-translate-y-0.5 transition block"
+            >
+              <p className="text-3xl">📚</p>
+              <p className="font-display font-bold mt-2">Read a short article</p>
+              <p className="text-xs text-stone-500 mt-1">Practical, campus-friendly guides on safe, affordable eating.</p>
+              <span className="inline-block mt-3 text-xs font-bold text-fresh">Browse articles →</span>
+            </Link>
+
+            <Link
+              href="/play"
+              className="anim-fade-up bg-white rounded-xl border p-5 hover:shadow-lift hover:-translate-y-0.5 transition block"
+              style={{ animationDelay: '90ms' }}
+            >
+              <p className="text-3xl">🎮</p>
+              <p className="font-display font-bold mt-2">Play a quick game</p>
+              <p className="text-xs text-stone-500 mt-1">Swipe kitchen habits and build a meal on a Badda budget.</p>
+              <span className="inline-block mt-3 text-xs font-bold text-fresh">Play now →</span>
+            </Link>
+          </div>
+
+          <p className="text-xs text-stone-500 text-center mt-4">Your answers are already saved — you can close this page anytime.</p>
+        </div>
       </div>
     );
   }
