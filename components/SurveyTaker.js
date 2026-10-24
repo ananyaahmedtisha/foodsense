@@ -82,7 +82,7 @@ export default function SurveyTaker({ surveyId, questions }) {
 
         <div className="bg-gradient-to-br from-fresh-light via-cream to-labteal-light rounded-2xl shadow-soft p-6 mt-4">
           <p className="font-display font-bold text-lg text-center">While you’re here, keep learning 🌱</p>
-          <p className="text-sm text-stone-600 text-center mt-1">Totally optional — two quick ways to use what you just shared.</p>
+          <p className="text-sm text-stone-600 text-center mt-1">Two quick ways to learn more about food safety and healthy eating.</p>
 
           <div className="grid sm:grid-cols-2 gap-4 mt-4">
             <Link
