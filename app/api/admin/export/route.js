@@ -1,5 +1,7 @@
 import { adminSupabase } from '@/lib/supabaseAdmin';
 import { isSupabaseConfigured } from '@/lib/supabaseServer';
+import { unpackQuestions } from '@/lib/surveyMeta';
+export const dynamic = 'force-dynamic';
 
 const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
 const fileSafe = (s) => String(s || 'survey').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 50) || 'survey';
@@ -38,7 +40,7 @@ export async function GET(req) {
 
   const lines = [];
   for (const s of surveys) {
-    const qs = (questions || []).filter((q) => q.survey_id === s.id);
+    const qs = unpackQuestions((questions || []).filter((q) => q.survey_id === s.id));
     const rs = (responses || []).filter((r) => r.survey_id === s.id);
     lines.push(`# ${s.title} (${rs.length} responses)`);
     lines.push(['Submitted', ...qs.map((q) => q.question_text)].map(esc).join(','));

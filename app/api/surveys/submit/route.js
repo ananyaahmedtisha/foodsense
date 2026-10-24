@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer';
+export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
   const { survey_id, answers } = await req.json();

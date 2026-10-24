@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { adminSupabase } from '@/lib/supabaseAdmin';
 import { isSupabaseConfigured } from '@/lib/supabaseServer';
+export const dynamic = 'force-dynamic';
 
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf', 'video/mp4', 'video/webm'];
 const MAX_BYTES = 12 * 1024 * 1024;

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminSupabase } from '@/lib/supabaseAdmin';
+export const dynamic = 'force-dynamic';
 
 function rowOf(b) {
   return {

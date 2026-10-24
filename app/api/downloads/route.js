@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { adminSupabase } from '@/lib/supabaseAdmin';
 import { isSupabaseConfigured } from '@/lib/supabaseServer';
+export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
   const { id } = await req.json();

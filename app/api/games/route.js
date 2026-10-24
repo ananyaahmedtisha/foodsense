@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { adminSupabase } from '@/lib/supabaseAdmin';
 import { getGameCards, rotateDaily } from '@/lib/content';
+export const dynamic = 'force-dynamic';
 
 // Public: live game cards (active only), daily-rotated. Falls back to demo.
 export async function GET(req) {

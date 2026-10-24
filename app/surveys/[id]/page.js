@@ -1,5 +1,6 @@
 import SurveyTaker from '@/components/SurveyTaker';
 import { createServerSupabase, isSupabaseConfigured } from '@/lib/supabaseServer';
+import { unpackQuestions } from '@/lib/surveyMeta';
 
 async function getSurvey(id) {
   if (id === 's1' || id === 's2' || !isSupabaseConfigured()) {
@@ -16,7 +17,7 @@ async function getSurvey(id) {
   const sb = createServerSupabase();
   const { data: survey } = await sb.from('surveys').select('*').eq('id', id).single();
   const { data: questions } = await sb.from('survey_questions').select('*').eq('survey_id', id).order('created_at');
-  return { survey, questions: questions || [], demo: false };
+  return { survey, questions: unpackQuestions(questions || []), demo: false };
 }
 
 export default async function TakeSurvey({ params }) {

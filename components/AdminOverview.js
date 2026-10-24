@@ -1,20 +1,30 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell, Tooltip } from 'recharts';
+import Link from 'next/link';
+import SurveyChart from '@/components/SurveyChart';
+import { scaleConfig, typeMeta } from '@/lib/surveyTypes';
 
-const COLORS = ['#16A34A', '#F59E0B', '#0D9488', '#A78BFA', '#F43F5E', '#64748B'];
-
-function Donut({ dist }) {
-  const data = Object.entries(dist || {}).map(([name, value]) => ({ name, value }));
-  if (!data.length || data.every((d) => !d.value)) return <p className="text-xs text-stone-400">No answers yet.</p>;
-  return (
-    <PieChart width={200} height={150}>
-      <Pie data={data} dataKey="value" nameKey="name" innerRadius={40} outerRadius={65}>
-        {data.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-      </Pie>
-      <Tooltip />
-    </PieChart>
-  );
+function chartFor(q, i, surveyTitle) {
+  if (!q.dist) return null;
+  const isScale = q.type === 'linear_scale' || q.type === 'rating';
+  const cfg = scaleConfig(q);
+  const data = Object.entries(q.dist).map(([name, value]) => {
+    let label = name;
+    if (isScale) {
+      const n = Number(name);
+      if (n === cfg.min && cfg.minLabel) label = `${name} — ${cfg.minLabel}`;
+      else if (n === cfg.max && cfg.maxLabel) label = `${name} — ${cfg.maxLabel}`;
+    }
+    return { name: label, value };
+  });
+  return {
+    kind: isScale || q.type === 'checkbox' ? 'bar' : 'donut',
+    title: q.text,
+    note: `${q.total} answered • ${typeMeta(q.type).label}`,
+    total: q.total,
+    data,
+    filename: `${surveyTitle || 'survey'}-q${i + 1}`,
+  };
 }
 
 export default function AdminOverview() {
@@ -24,8 +34,8 @@ export default function AdminOverview() {
 
   async function load() {
     const [j, h] = await Promise.all([
-      fetch('/api/admin/analytics').then((r) => r.json()),
-      fetch('/api/admin/settings?key=homepage').then((r) => r.json()).catch(() => ({})),
+      fetch('/api/admin/analytics', { cache: 'no-store' }).then((r) => r.json()),
+      fetch('/api/admin/settings?key=homepage', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
     ]);
     if (j.demo) { setA({ demo: true }); return; }
     setA(j);
@@ -62,25 +72,43 @@ export default function AdminOverview() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-soft p-6">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <p className="font-display font-bold">Survey results</p>
           <select className="border rounded-xl px-2 py-1.5 text-sm" value={viewSurvey} onChange={(e) => setViewSurvey(e.target.value)}>
             {a.surveyList.map((s) => <option key={s.id} value={s.id}>{s.title} ({a.surveys[s.id]?.total ?? 0})</option>)}
           </select>
+          <Link href={`/admin/surveys?tab=analysis${viewSurvey ? `&survey=${viewSurvey}` : ''}`} className="ml-auto text-xs font-bold px-3 py-1.5 rounded-full border hover:bg-cream">
+            Open full analysis →
+          </Link>
         </div>
+
+        {viewed && viewed.total === 0 && <p className="text-sm text-stone-500 mt-4">No responses yet.</p>}
+
         {viewed && (
           <div className="grid md:grid-cols-2 gap-4 mt-4">
-            {viewed.questions.map((q) => (
-              <div key={q.id} className="border rounded-xl p-4">
-                <p className="text-sm font-semibold">{q.text}</p>
-                {q.pct !== null && (
-                  <p className="text-sm mt-1">Correct: <strong className="text-fresh">{q.pct}%</strong> <span className="text-stone-400">(answer: {q.correct_answer})</span></p>
-                )}
-                {q.dist && <Donut dist={q.dist} />}
-                {q.samples && <ul className="text-xs text-stone-500 mt-2 list-disc ml-4">{q.samples.map((s, i) => <li key={i}>{s}</li>)}</ul>}
-                {q.total === 0 && <p className="text-xs text-stone-400 mt-1">No responses yet.</p>}
-              </div>
-            ))}
+            {viewed.questions.map((q, i) => {
+              const chart = chartFor(q, i, viewed.title);
+              return (
+                <div key={q.id} className="border rounded-xl p-4">
+                  <p className="text-sm font-semibold">{q.text}</p>
+                  {q.pct !== null && (
+                    <p className="text-sm mt-1">Correct: <strong className="text-fresh">{q.pct}%</strong> <span className="text-stone-400">(answer: {q.correct_answer})</span></p>
+                  )}
+                  {chart && <SurveyChart {...chart} className="mt-1" />}
+                  {q.samples?.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-[11px] font-semibold text-stone-500 mb-1">All answers ({q.samples.length})</p>
+                      <div className="max-h-40 overflow-y-auto border rounded-lg divide-y">
+                        {q.samples.map((s, j) => (
+                          <p key={j} className="text-xs px-2.5 py-1.5 whitespace-pre-wrap break-words">{s}</p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {q.total === 0 && <p className="text-xs text-stone-400 mt-1">No responses yet.</p>}
+                </div>
+              );
+            })}
             {viewed.questions.length === 0 && <p className="text-sm text-stone-500">No questions in this survey.</p>}
           </div>
         )}

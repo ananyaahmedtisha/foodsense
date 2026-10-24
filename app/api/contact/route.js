@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminSupabase } from '@/lib/supabaseAdmin';
+export const dynamic = 'force-dynamic';
 
 // Public contact form → inbox. Admin reads via /api/admin/messages.
 export async function POST(req) {

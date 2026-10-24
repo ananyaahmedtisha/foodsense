@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminSupabase } from '@/lib/supabaseAdmin';
+export const dynamic = 'force-dynamic';
 
 // Public: request a missing food. Admin triages in Admin → Foods.
 export async function POST(req) {

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabaseServer';
 import { calorieFoods } from '@/lib/calorieFoods';
+export const dynamic = 'force-dynamic';
 
 // Public: live foods from Supabase, static file as fallback.
 export async function GET() {

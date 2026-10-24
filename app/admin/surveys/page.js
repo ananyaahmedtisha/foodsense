@@ -1,2 +1,2 @@
-import SurveyBuilder from '@/components/SurveyBuilder';
-export default function AdminSurveys() { return <SurveyBuilder />; }
+import SurveyStudio from '@/components/SurveyStudio';
+export default function AdminSurveys() { return <SurveyStudio />; }

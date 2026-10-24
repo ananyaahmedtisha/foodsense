@@ -3,6 +3,15 @@ import { NextResponse } from 'next/server';
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
+
+  // Admin APIs must never be cached by the browser or a CDN — otherwise the
+  // dashboard shows yesterday's responses.
+  if (pathname.startsWith('/api/admin')) {
+    const res = NextResponse.next();
+    res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    return res;
+  }
+
   if (!pathname.startsWith('/admin') || pathname.startsWith('/admin/login') || pathname.startsWith('/admin/reset-password')) {
     return NextResponse.next();
   }
@@ -31,4 +40,4 @@ export async function middleware(req) {
   return res;
 }
 
-export const config = { matcher: ['/admin/:path*'] };
+export const config = { matcher: ['/admin/:path*', '/api/admin/:path*'] };
