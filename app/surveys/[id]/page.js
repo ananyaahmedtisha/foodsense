@@ -31,7 +31,6 @@ export default async function TakeSurvey({ params }) {
           {survey.description}
         </div>
       )}
-      <p className="text-sm text-stone-500 mt-3">Anonymous • ~2 minutes • helps us measure 30% improvement</p>
       <SurveyTaker surveyId={survey.id} questions={questions} />
     </div>
   );

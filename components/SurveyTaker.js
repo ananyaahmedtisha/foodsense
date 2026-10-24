@@ -208,7 +208,6 @@ export default function SurveyTaker({ surveyId, questions }) {
       <button disabled={saving} className="py-3 rounded-xl bg-fresh text-white font-bold disabled:opacity-70">
         {saving ? 'Submitting…' : 'Submit response'}
       </button>
-      <p className="text-[11px] text-stone-400 text-center">Anonymous — we never collect names or emails unless a question asks for it.</p>
     </form>
   );
 }
