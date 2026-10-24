@@ -119,6 +119,18 @@ function QuestionFields({ q, index, onChange, onRemove, onUp, onDown, saving, fo
             ))}
           </div>
           <button type="button" onClick={addOption} className="text-xs font-bold text-fresh mt-2">+ Add option</button>
+          <label className="flex items-start gap-1.5 text-xs font-semibold mt-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              className="mt-0.5"
+              checked={!!settings.allowOther}
+              onChange={(e) => onChange({ settings: { ...settings, allowOther: e.target.checked } })}
+            />
+            <span>
+              Add an “Other” choice
+              <span className="block font-normal text-[11px] text-stone-500">Respondents who pick it type their own answer.</span>
+            </span>
+          </label>
         </div>
       )}
 

@@ -1,9 +1,21 @@
 'use client';
 import { useState } from 'react';
-import { normalizeType, optionsOf, scaleConfig, scaleValues, typeMeta, isAnswered } from '@/lib/surveyTypes';
+import {
+  normalizeType,
+  optionsOf,
+  scaleConfig,
+  scaleValues,
+  typeMeta,
+  isAnswered,
+  allowsOther,
+} from '@/lib/surveyTypes';
+
+const OTHER = '__other__';
 
 export default function SurveyTaker({ surveyId, questions }) {
   const [answers, setAnswers] = useState({});
+  const [otherOn, setOtherOn] = useState({});
+  const [otherText, setOtherText] = useState({});
   const [done, setDone] = useState(false);
   const [saving, setSaving] = useState(false);
   const [missing, setMissing] = useState([]);
@@ -12,23 +24,46 @@ export default function SurveyTaker({ surveyId, questions }) {
   const required = (q) => q.is_required !== false;
   const set = (id, v) => setAnswers((a) => ({ ...a, [id]: v }));
 
-  const answeredCount = questions.filter((q) => isAnswered(q, answers[q.id])).length;
+  function toggleOther(q, on) {
+    setOtherOn((o) => ({ ...o, [q.id]: on }));
+    if (!on) setOtherText((t) => ({ ...t, [q.id]: '' }));
+  }
+
+  // Merge the pick-list answer with any typed "Other" value.
+  function valueOf(q) {
+    const type = normalizeType(q.question_type);
+    const typed = (otherText[q.id] || '').trim();
+    if (type === 'checkbox') {
+      const picked = Array.isArray(answers[q.id]) ? answers[q.id] : [];
+      return otherOn[q.id] && typed ? [...picked, typed] : picked;
+    }
+    if (type === 'multiple_choice' || type === 'dropdown') {
+      if (otherOn[q.id]) return typed;
+      return answers[q.id] ?? '';
+    }
+    return answers[q.id];
+  }
+
+  const answeredCount = questions.filter((q) => isAnswered(q, valueOf(q))).length;
 
   async function submit(e) {
     e.preventDefault();
-    const gaps = questions.filter((q) => required(q) && !isAnswered(q, answers[q.id])).map((q) => q.id);
+    const gaps = questions.filter((q) => required(q) && !isAnswered(q, valueOf(q))).map((q) => q.id);
     setMissing(gaps);
     if (gaps.length) {
       setMsg(`Please answer ${gaps.length === 1 ? 'the highlighted question' : 'the ' + gaps.length + ' highlighted questions'} before submitting.`);
       document.getElementById('q-' + gaps[0])?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+    const payload = {};
+    for (const q of questions) payload[q.id] = valueOf(q);
+
     setSaving(true);
     try {
       await fetch('/api/surveys/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ survey_id: surveyId, answers }),
+        body: JSON.stringify({ survey_id: surveyId, answers: payload }),
       });
     } catch {}
     setSaving(false);
@@ -65,6 +100,8 @@ export default function SurveyTaker({ surveyId, questions }) {
         const gap = missing.includes(q.id);
         const type = normalizeType(q.question_type);
         const meta = typeMeta(q.question_type);
+        const canOther = allowsOther(q) && ['multiple_choice', 'checkbox', 'dropdown'].includes(type);
+        const otherActive = !!otherOn[q.id];
         return (
           <div key={q.id} id={'q-' + q.id} className={gap ? 'rounded-xl bg-red-50 dark:bg-red-950/30 p-3 -m-3' : ''}>
             <p className="font-semibold">
@@ -84,12 +121,40 @@ export default function SurveyTaker({ surveyId, questions }) {
                     <input
                       type="radio"
                       name={q.id}
-                      checked={answers[q.id] === opt}
-                      onChange={() => set(q.id, opt)}
+                      checked={!otherActive && answers[q.id] === opt}
+                      onChange={() => {
+                        toggleOther(q, false);
+                        set(q.id, opt);
+                      }}
                     />
                     {opt}
                   </label>
                 ))}
+                {canOther && (
+                  <>
+                    <label className="flex items-center gap-2 text-sm border rounded-xl px-3 py-2 cursor-pointer hover:bg-cream">
+                      <input
+                        type="radio"
+                        name={q.id}
+                        checked={otherActive}
+                        onChange={() => {
+                          toggleOther(q, true);
+                          set(q.id, '');
+                        }}
+                      />
+                      Other
+                    </label>
+                    {otherActive && (
+                      <input
+                        autoFocus
+                        className="w-full border rounded-xl p-2.5 text-sm ml-1"
+                        placeholder="Type your answer…"
+                        value={otherText[q.id] || ''}
+                        onChange={(e) => setOtherText((t) => ({ ...t, [q.id]: e.target.value }))}
+                      />
+                    )}
+                  </>
+                )}
               </div>
             )}
 
@@ -112,20 +177,61 @@ export default function SurveyTaker({ surveyId, questions }) {
                     {opt}
                   </label>
                 ))}
+                {canOther && (
+                  <>
+                    <label className="flex items-center gap-2 text-sm border rounded-xl px-3 py-2 cursor-pointer hover:bg-cream">
+                      <input
+                        type="checkbox"
+                        checked={otherActive}
+                        onChange={(e) => toggleOther(q, e.target.checked)}
+                      />
+                      Other
+                    </label>
+                    {otherActive && (
+                      <input
+                        autoFocus
+                        className="w-full border rounded-xl p-2.5 text-sm ml-1"
+                        placeholder="Type your answer…"
+                        value={otherText[q.id] || ''}
+                        onChange={(e) => setOtherText((t) => ({ ...t, [q.id]: e.target.value }))}
+                      />
+                    )}
+                  </>
+                )}
               </div>
             )}
 
             {type === 'dropdown' && (
-              <select
-                className="w-full mt-2 border rounded-xl p-2.5 text-sm"
-                value={answers[q.id] ?? ''}
-                onChange={(e) => set(q.id, e.target.value)}
-              >
-                <option value="">Choose…</option>
-                {optionsOf(q).map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
+              <>
+                <select
+                  className="w-full mt-2 border rounded-xl p-2.5 text-sm"
+                  value={otherActive ? OTHER : answers[q.id] ?? ''}
+                  onChange={(e) => {
+                    if (e.target.value === OTHER) {
+                      toggleOther(q, true);
+                      set(q.id, '');
+                      return;
+                    }
+                    toggleOther(q, false);
+                    set(q.id, e.target.value);
+                  }}
+                >
+                  <option value="">Choose…</option>
+                  {optionsOf(q).map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                  {canOther && <option value={OTHER}>Other…</option>}
+                </select>
+                {canOther && otherActive && (
+                  <input
+                    autoFocus
+                    className="w-full mt-2 border rounded-xl p-2.5 text-sm"
+                    placeholder="Type your answer…"
+                    value={otherText[q.id] || ''}
+                    onChange={(e) => setOtherText((t) => ({ ...t, [q.id]: e.target.value }))}
+                  />
+                )}
+              </>
             )}
 
             {type === 'linear_scale' && (
